@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserved Books</title>
+    <link rel="stylesheet" href="~/CSS/Books/books_table_styles.css">
+    <link rel="stylesheet" href="~/CSS/Books/pagination_styles.css">
+</head>
+<body>
+    <h2>Your Reserved Books</h2>
+    <button class="btn btn-primary" onclick="goBack()">Go back</button>
+    <table id="reservedBooksTable">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Reserved on</th>
+                <th>Return by</th>
+            </tr>
+        </thead>
+        <tbody id="reservedBooksTableBody"></tbody>
+    </table>
+
+    <div id="pagination" class="pagination"></div>
+
+    <script>
+        let currentPage = 1;
+        const pageSize = 10;
+    
+        async function loadReservedBooks(pageNumber) {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                window.location.href = "/api/authentication/loginPage";
+                return;
+            }
+            try {
+                const url = `/api/booking/user/reservedBooks?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+    
+                if (response.ok) {
+                    const result = await response.json();
+                    displayReservedBooks(result.reservedBooks);
+                    displayPagination(result.currentPage, result.totalPages);
+                } else {
+                    document.getElementById('reservedBooksTableBody').innerHTML = "<tr><td colspan='5'>Failed to load reserved books. Please try again.</td></tr>";
+                }
+            } catch (error) {
+                document.getElementById('reservedBooksTableBody').innerHTML = "<tr><td colspan='5'>Error loading reserved books. Please try again later.</td></tr>";
+            }
+        }
+    
+        function displayReservedBooks(books) {
+            const booksList = document.getElementById('reservedBooksTableBody');
+            booksList.innerHTML = '';
+            books.forEach(book => {
+                const bookRow = document.createElement('tr');
+                bookRow.setAttribute('data-book-id', book.bookId);
+    
+                bookRow.innerHTML = `
+                    <td>${book.book.bookTitle}</td>
+                    <td>${book.book.author.name} ${book.book.author.lastName}</td>
+                    <td>${new Date(book.borrowDate).toLocaleDateString()}</td>
+                    <td>${new Date(book.returnDate).toLocaleDateString()}</td>
+                `;
+    
+                booksList.appendChild(bookRow);
+            });
+        }
+    
+        function displayPagination(currentPage, totalPages) {
+            const paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = '';
+    
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.classList.add('pagination-btn');
+                pageButton.innerText = i;
+                pageButton.onclick = () => loadReservedBooks(i);
+    
+                if (i === currentPage) {
+                    pageButton.classList.add('active');
+                }
+    
+                paginationContainer.appendChild(pageButton);
+            }
+        }
+        
+        function goBack() {
+            window.location.href = `/api/booking/user`;
+        }
+        loadReservedBooks(currentPage);
+    </script>
+</body>
+</html>

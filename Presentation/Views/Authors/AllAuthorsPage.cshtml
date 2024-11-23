@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authors Page</title>
+    <link rel="stylesheet" type="text/css" href="~/CSS/Authors/authors_form_styles.css" />
+    <link rel="stylesheet" type="text/css" href="~/CSS/MainPage/search_styles.css" />
+    <link rel="stylesheet" type="text/css" href="~/CSS/Authors/authors_table_styles.css" />
+    <link rel="stylesheet" type="text/css" href="~/CSS/Books/pagination_styles.css" />
+</head>
+<body>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search by surname...">
+        <button type="button" class="btn btn-primary" onclick="applyFilters()">Search</button>
+    </div>
+    <button class="btn btn-author" onclick="addAuthor()">Add author</button>
+    <button class="btn btn-author" onclick="goToBooks()">Go back</button>
+
+    <table id="authorsTable">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Date of birth</th>
+            <th>Country of birth</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="authorsTableBody"></tbody>
+    </table>
+
+    <div id="pagination" class="pagination"></div>
+
+    <div id="deleteModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Delete author</h2>
+            <p>Are you sure you want to delete this author?</p>
+            <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+<script>
+        let currentPage = 1;
+        const pageSize = 10;
+        let authorIdToDelete = null;
+        async function loadAuthors(pageNumber) {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                window.location.href = "/api/authentication/loginPage";
+                return;
+            }           
+            const searchTerm = document.getElementById('searchInput').value;
+            try {
+                const url = `/api/authors/GetAuthors?pageNumber=${pageNumber}&pageSize=${pageSize}`                                            
+                                            + `&searchTerm=${encodeURIComponent(searchTerm)}`;
+                const response = await fetch(url, { 
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`, 
+                        'Content-Type': 'application/json'
+                    }
+                });              
+                if (response.ok) {  
+                    const result = await response.json();
+                    displayAuthors(result.authors);
+                    displayPagination(result.currentPage, result.totalPages);
+                } else {
+                    document.getElementById('authorsTableBody').innerHTML = "<tr><td colspan='7'>Failed to load authors. Please login again.</td></tr>";
+                }
+            } catch (error) {
+                document.getElementById('authorsTableBody').innerHTML = "<tr><td colspan='7'>Error loading authors. Please try again later.</td></tr>";
+            }
+        }
+
+        function displayAuthors(authors) {
+            const authorsList = document.getElementById('authorsTableBody');
+            authorsList.innerHTML = '';  
+            authors.forEach(author => {              
+                const authorRow = document.createElement('tr');
+                authorRow.setAttribute('data-author-id', author.id);  
+                authorRow.innerHTML = `
+                    <td>${author.name}</td>
+                    <td>${author.lastName}</td>
+                    <td>${author.birthDate}</td>
+                    <td>${author.country}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="editAuthor(${author.id})">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteAuthor(${author.id})">Delete</button>
+                    </td>
+                `;     
+                authorsList.appendChild(authorRow); 
+            });
+        }
+        
+        function displayPagination(currentPage, totalPages) {
+            const paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = '';  
+    
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.classList.add('pagination-btn');
+                pageButton.innerText = i;
+                pageButton.onclick = () => loadAuthors(i);  
+                
+                if (i === currentPage) {
+                    pageButton.classList.add('active');  
+                }      
+                paginationContainer.appendChild(pageButton);
+            }
+        }
+        
+        function applyFilters() {
+            loadAuthors();
+        }
+        
+        function closeModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            authorIdToDelete = null;  
+        }
+        
+        async function deleteAuthor(authorId) {
+            authorIdToDelete = authorId;  
+                document.getElementById('deleteModal').style.display = 'block';  
+        }
+            
+        async function editAuthor(authorId) {
+            window.location.href = `/api/authors/edit/${authorId}`;
+        }
+        
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
+            if (authorIdToDelete) {
+                const token = localStorage.getItem('authToken');
+                try {
+                    const response = await fetch(`/api/authors/delete/${authorIdToDelete}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        await loadAuthors();  
+                        closeModal();  
+                    } else {
+                        alert('Failed to delete the author.');
+                    }
+                } catch (error) {
+                    alert('Error occurred while deleting the author.');
+                }
+            }
+        });
+        
+        async function addAuthor() {
+            window.location.href = `/api/authors/AddAuthor`;       
+        }
+        
+        function goToBooks() {
+            window.location.href = `/api/books/admin`;
+        }
+         
+        loadAuthors(1);
+    </script>
+</body>
+</html>

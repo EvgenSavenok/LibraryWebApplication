@@ -1,0 +1,130 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: powderblue; 
+}
+
+h1 {
+    text-align: center;
+    color: #333; 
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd; 
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #4CAF50; 
+    color: white; 
+}
+
+tr:hover {
+    background-color: #f5f5f5; 
+}
+
+.btn {
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-primary {
+    background-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; 
+}
+
+.btn-author {
+    background-color: #4CAF50FF;
+}
+
+.btn-author:hover {
+    background-color: #45A049FF;
+}
+
+.btn-danger {
+    background-color: #dc3545; 
+}
+
+.btn-danger:hover {
+    background-color: #c82333; 
+}
+
+.pagination-btn {
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    margin: 2px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.pagination-btn.active {
+    background-color: #4CAF50; 
+    color: white;
+}
+
+.pagination-btn:hover {
+    background-color: #f1f1f1;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    border-radius: 10px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}

@@ -1,0 +1,67 @@
+﻿@model Application.DataTransferObjects.AuthorDto
+
+<h2>Edit author</h2>
+
+<link rel="stylesheet" type="text/css" href="~/CSS/Authors/edit_author_page_styles.css" />
+<form id="editAuthorForm">
+    <div>
+        <label>Name</label>
+        <input type="text" name="Name" value="@Model.Name" placeholder="Name" required />
+    </div>
+
+    <div>
+        <label>Last name</label>
+        <input type="text" name="LastName" value="@Model.LastName" placeholder="LastName" required />
+    </div>
+
+    <div>
+        <label>Date of birth</label>
+        <input type="text" name="BirthDate" value="@Model.BirthDate" placeholder="BirthDate" required />
+    </div>
+
+    <div>
+        <label>Country</label>
+        <input type="text" name="Country" value="@Model.Country" placeholder="Country" required />
+    </div>
+
+    <button type="button" onclick="submitForm()">Save</button>
+</form>
+
+<script>
+    async function submitForm() {
+        const form = document.getElementById('editAuthorForm');
+        
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());  
+
+        const authorId = @Model.Id;  
+        const token = localStorage.getItem('authToken');
+        
+        const authorData = {
+            Id: authorId,
+            Name: data.Name.trim() || null,
+            LastName: data.LastName.trim() || null,
+            BirthDate: data.BirthDate.trim() || null,
+            Country: data.Country.trim() || null
+        };
+
+        try {
+            const response = await fetch(`/api/authors/${authorId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(authorData)  
+            });
+            
+            if (response.ok) {
+                window.location.href = '/api/authors/authorsPage';  
+            } else {
+                alert("Failed to update the author. Please try again.");
+            }
+        } catch (error) {
+            alert("An error occurred. Please try again later.");
+        }
+    }
+</script>

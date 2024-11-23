@@ -1,0 +1,71 @@
+﻿@model dynamic
+
+<h2>Book Information</h2>
+
+<link rel="stylesheet" href="~/CSS/Booking/book_info_page_styles.css">
+<link rel="stylesheet" type="text/css" href="~/CSS/Booking/success_reserving_form_styles.css" />
+<div>
+    <p><strong>Title:</strong> @Model.Book.BookTitle</p>
+    <p><strong>ISBN:</strong> @Model.Book.ISBN</p>
+    <p><strong>Genre:</strong> @Model.Book.Genre</p>
+    <p><strong>Description:</strong> @Model.Book.Description</p>
+    <p><strong>Available Copies:</strong> @Model.Book.Amount</p>
+</div>
+
+<h3>Author Information</h3>
+<div>
+    <p><strong>Author:</strong> @Model.Author.Name @Model.Author.LastName</p>
+    <p><strong>Birth Date:</strong> @Model.Author.BirthDate</p>
+    <p><strong>Country:</strong> @Model.Author.Country</p>
+</div>
+
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Success!</h2>
+        <p>Book successfully reserved.</p>
+        <button onclick="window.location.href='/api/booking/user'" class="btn">Go to My Books</button>
+    </div>
+</div>
+
+@if (Model.Book.Amount <= 0)
+{
+    <p class="no-books-message">There are no books</p>
+}
+else
+{
+    <button onclick="reserveBook(@Model.Book.Id)" class="btn reserve-btn">Reserve</button>
+}
+
+<button onclick="window.location.href='/api/booking/user'" class="btn return-btn">Go back</button>
+
+<script>
+    async function reserveBook(bookId) {
+        const token = localStorage.getItem('authToken');  
+        if (!token) {
+            alert('Authorization token is missing. Please login again.');
+            return;
+        }
+        try {
+            const response = await fetch(`/api/booking/take/${bookId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,  
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                document.getElementById('successModal').style.display = 'block';  
+            } else {
+                alert('Failed to reserve the book.');
+            }
+        } catch (error) {
+            alert('An error occurred while reserving the book.');
+        }
+    }
+    function closeModal() {
+        document.getElementById('successModal').style.display = 'none';
+        window.location.href = '/api/booking/user';
+    }
+</script>

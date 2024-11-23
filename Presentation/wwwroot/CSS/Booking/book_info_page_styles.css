@@ -1,0 +1,62 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    background-color: powderblue;
+    margin: 0;
+    padding: 20px;
+}
+
+h2, h3 {
+    color: #333;
+    text-align: center;
+}
+
+div {
+    margin-bottom: 15px;
+}
+
+p {
+    font-size: 16px;
+    color: #555;
+}
+
+.no-books-message {
+    font-size: 18px;
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
+.btn {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: block;
+    margin: 10px auto;
+    width: 200px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.return-btn {
+    background-color: #6c757d;
+}
+
+.return-btn:hover {
+    background-color: #5a6268;
+}
+
+.reserve-btn {
+    background-color: #28a745;
+}
+
+.reserve-btn:hover {
+    background-color: #218838;
+}

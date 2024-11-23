@@ -1,0 +1,76 @@
+﻿@model Application.DataTransferObjects.AuthorDto
+
+<h2>Add author</h2>
+
+<link rel="stylesheet" type="text/css" href="~/CSS/Authors/add_author_styles.css" />
+<form id="addAuthorForm">
+    <div>
+        <label>Name</label>
+        <input type="text" name="Name" placeholder="Name" required=""/>
+    </div>
+
+    <div>
+        <label>Last name</label>
+        <input type="text" name="LastName" placeholder="LastName" required=""/>
+    </div>
+
+    <div>
+        <label>Date of birth</label>
+        <input type="text" name="BirthDate" placeholder="BirthDate" required=""/>
+    </div>
+
+    <div>
+        <label>Country</label>
+        <input type="text" name="Country" placeholder="Country" required=""/>
+    </div>
+
+    <button type="button" onclick="submitForm()">Add</button>
+</form>
+
+<script>
+    async function submitForm() {
+        const form = document.getElementById('addAuthorForm');
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        const token = localStorage.getItem('authToken');
+        
+        const authorData = {
+                Name: data.Name.trim() || null,
+                LastName: data.LastName.trim() || null,
+                BirthDate: data.BirthDate.trim() || null, 
+                Country: data.Country.trim() || null
+        };
+
+        try {
+            const response = await fetch(`/api/authors/add`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                    },
+                body: JSON.stringify(authorData)
+            });
+
+            if (response.ok) {
+                const authorsResponse = await fetch('/api/authors/authorsPage', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                    }
+                });
+                if (authorsResponse.ok)
+                    window.location.href = '/api/authors/authorsPage';
+                else {
+                    alert("Failed to load list of authors");
+                }
+            } else {
+                alert("Failed to add the author. Please try again.");
+            }
+        } catch (error) {
+            alert("An error occurred. Please try again later.");
+        }
+    }
+</script>
