@@ -1,6 +1,7 @@
 ﻿using Application.Contracts;
 using Application.Contracts.UseCasesContracts.BookUseCasesContracts;
 using Application.DataTransferObjects;
+using Application.Validation;
 using AutoMapper;
 
 namespace Application.UseCases.BookUseCases;
@@ -24,6 +25,7 @@ public class GetBookByIdUseCase : IGetBookByIdUseCase
         if (book == null)
         {
             _logger.LogInfo($"Book with id: {bookId} doesn't exist in the database.");
+            throw new NotFoundException($"Book with id {bookId} not found.");
         }
         return _mapper.Map<BookDto>(book);
     }

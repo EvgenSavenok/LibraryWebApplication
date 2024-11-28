@@ -2,6 +2,7 @@
 using Application.Contracts.UseCasesContracts.AuthUseCasesContracts;
 using Application.DataTransferObjects;
 using AutoMapper;
+using Domain.Entities.AuthDto;
 using Domain.Entities.Models;
 using Microsoft.AspNetCore.Identity;
 

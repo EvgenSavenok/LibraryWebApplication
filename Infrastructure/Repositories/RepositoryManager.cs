@@ -1,6 +1,7 @@
 ﻿using Application.Contracts;
 using Domain.Contracts;
 using Domain.Entities;
+using Infrastructure.Repositories;
 
 namespace Repository.Repositories;
 

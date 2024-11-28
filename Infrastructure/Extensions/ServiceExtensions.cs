@@ -8,8 +8,9 @@ using Application.UseCases.AuthorUseCases;
 using Application.UseCases.AuthUseCases;
 using Application.UseCases.BookUseCases;
 using Application.UseCases.BorrowingUseCases;
-using Domain.Entities;
+using Application.Validation;
 using Domain.Entities.Models;
+using FluentValidation;
 using Infrastructure.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -85,10 +86,12 @@ public static class ServiceExtensions
     
     public static IServiceCollection AddUseCases(this IServiceCollection services)
     {
+        //Auth use cases
         services.AddScoped<IRegisterUserUseCase, RegisterUserUseCase>();
         services.AddScoped<IAuthenticateUserUseCase, AuthenticateUserUseCase>();
         services.AddScoped<IRefreshTokenUseCase, RefreshTokenUseCase>();
         
+        //Books management use cases
         services.AddScoped<IGetBooksUseCase, GetBooksUseCase>();
         services.AddScoped<IGetBookByIdUseCase, GetBookByIdUseCase>();
         services.AddScoped<ICreateBookUseCase, CreateBookUseCase>();
@@ -96,6 +99,7 @@ public static class ServiceExtensions
         services.AddScoped<IDeleteBookUseCase, DeleteBookUseCase>();
         services.AddScoped<ICountBooksUseCase, CountBooksUseCase>();
 
+        //Authors management use cases
         services.AddScoped<ICountAuthorsUseCase, CountAuthorsUseCase>();
         services.AddScoped<ICreateAuthorUseCase, CreateAuthorUseCase>();
         services.AddScoped<IDeleteAuthorUseCase, DeleteAuthorUseCase>();
@@ -103,10 +107,15 @@ public static class ServiceExtensions
         services.AddScoped<IGetAuthorByIdUseCase, GetAuthorByIdUseCase>();
         services.AddScoped<IUpdateAuthorUseCase, UpdateAuthorUseCase>();
         
+        //Borrowing of books use cases
         services.AddScoped<ICountBorrowsUseCase, CountBorrowsUseCase>();
         services.AddScoped<ICreateBorrowUseCase, CreateBorrowUseCase>();
         services.AddScoped<IGetUserBorrowUseCase, GetUserBorrowUseCase>();
         services.AddScoped<IGetUsersBorowsUseCase, GetUsersBorowsUseCase>();
+        
+        //Validation use cases
+        services.AddValidatorsFromAssemblyContaining<BookValidator>();
+        
         
         return services;
     }

@@ -1,5 +1,6 @@
 ﻿using Application.Contracts;
 using Application.Contracts.UseCasesContracts.BookUseCasesContracts;
+using Application.Validation;
 
 namespace Application.UseCases.BookUseCases;
 
@@ -19,6 +20,7 @@ public class DeleteBookUseCase : IDeleteBookUseCase
         if (book == null)
         {
             _logger.LogInfo($"Book with id: {bookId} doesn't exist in the database.");
+            throw new NotFoundException($"Book with id {bookId} not found.");
         }
         _repository.Book.Delete(book);
         await _repository.SaveAsync();

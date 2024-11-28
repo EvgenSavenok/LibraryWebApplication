@@ -40,22 +40,14 @@ public class BooksController : Controller
             currentPage = requestParameters.PageNumber,
             totalPages
         };
-
         return Ok(response);
     }
 
-    [HttpGet("{id}", Name = "BookById")]
+    [HttpGet("{id}", Name = "BookById"), Authorize]
     public async Task<IActionResult> GetBook(int id)
     {
-        try
-        {
-            var book = await _bookService.GetBookByIdAsync(id);
-            return Ok(book);
-        }
-        catch (Exception ex)
-        {
-            return NotFound(ex.Message);
-        }
+        var book = await _bookService.GetBookByIdAsync(id);
+        return Ok(book);
     }
     
     [HttpGet("AddBook")]
@@ -82,7 +74,7 @@ public class BooksController : Controller
         return View("~/Views/Books/AddBookPage.cshtml");
     }
 
-    [HttpPost("add")]
+    [HttpPost("add"), Authorize]
     public async Task<IActionResult> CreateBook([FromBody] BookForCreationDto book)
     {
         if (!ModelState.IsValid)
@@ -118,31 +110,17 @@ public class BooksController : Controller
     }
 
 
-    [HttpPut("{id}", Name = "UpdateBook")]
+    [HttpPut("{id}", Name = "UpdateBook"), Authorize]
     public async Task<IActionResult> UpdateBook(int id, [FromBody] BookForUpdateDto bookDto)
     {
-        try
-        {
-            await _bookService.UpdateBookAsync(id, bookDto);
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return NotFound(ex.Message);
-        }
+        await _bookService.UpdateBookAsync(id, bookDto);
+        return NoContent();
     }
 
-    [HttpDelete("delete/{id}")]
+    [HttpDelete("delete/{id}"), Authorize]
     public async Task<IActionResult> DeleteBook(int id)
     {
-        try
-        {
-            await _bookService.DeleteBookAsync(id);
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return NotFound(ex.Message);
-        }
+        await _bookService.DeleteBookAsync(id);
+        return NoContent();
     }
 }

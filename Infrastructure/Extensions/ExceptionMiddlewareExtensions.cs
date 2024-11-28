@@ -1,11 +1,12 @@
 ﻿using System.Net;
 using Application.Contracts;
+using Application.Validation;
 using Domain.Entities.ErrorModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 
-namespace Repository.Extensions;
+namespace Infrastructure.Extensions;
 
 public static class ExceptionMiddlewareExtensions
 {
@@ -15,16 +16,38 @@ public static class ExceptionMiddlewareExtensions
         {
             appError.Run(async context =>
             {
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 context.Response.ContentType = "application/json";
                 var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                 if (contextFeature != null)
                 {
-                    logger.LogError($"Something went wrong: {contextFeature.Error}");
-                    await context.Response.WriteAsync(new ErrorDetails()
+                    var exception = contextFeature.Error;
+
+                    int statusCode;
+                    string message;
+
+                    switch (exception)
                     {
-                        StatusCode = context.Response.StatusCode,
-                        Message = "Internal Server Error."
+                        case NotFoundException notFoundException:
+                            statusCode = (int)HttpStatusCode.NotFound;
+                            message = notFoundException.Message;
+                            break;
+                        case ConflictException conflictException:
+                            statusCode = (int)HttpStatusCode.Conflict;
+                            message = conflictException.Message;
+                            break;
+                        default:
+                            statusCode = (int)HttpStatusCode.InternalServerError;
+                            message = "Internal Server Error.";
+                            break;
+                    }
+
+                    logger.LogError($"Something went wrong: {exception}");
+
+                    context.Response.StatusCode = statusCode;
+                    await context.Response.WriteAsync(new ErrorDetails
+                    {
+                        StatusCode = statusCode,
+                        Message = message
                     }.ToString());
                 }
             });

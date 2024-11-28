@@ -1,11 +1,12 @@
 ﻿using Domain.Contracts;
-using Domain.Entities;
 using Domain.Entities.Models;
 using Domain.Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
+using Repository;
 using Repository.Extensions;
+using Repository.Repositories;
 
-namespace Repository.Repositories;
+namespace Infrastructure.Repositories;
 
 public class BookRepository : RepositoryBase<Book>, IBookRepository
 {
@@ -44,4 +45,7 @@ public class BookRepository : RepositoryBase<Book>, IBookRepository
         query = query.Search(bookParameters.SearchTerm);
         return await query.CountAsync();
     }
+    
+    public async Task<Book> GetBookByIsbnAsync(string isbn) =>
+        await FindByCondition(b => b.ISBN == isbn, trackChanges: false).SingleOrDefaultAsync();
 }

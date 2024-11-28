@@ -33,22 +33,10 @@ public class AuthenticationController : Controller
     [HttpPost("register")]
     public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistration)
     {
-        if (userForRegistration == null || !ModelState.IsValid)
-        {
-            return BadRequest("Invalid registration request");
-        }
-
         var result = await _authService.RegisterUserAsync(userForRegistration);
-        if (!result.Succeeded)
-        {
-            foreach (var error in result.Errors)
-            {
-                ModelState.TryAddModelError(error.Code, error.Description);
-            }
-            return BadRequest(ModelState);
-        }
-
-        return StatusCode(201);
+        return result.Succeeded 
+            ? StatusCode(201) 
+            : BadRequest(result.Errors);
     }
     
     [HttpPost("login")]
