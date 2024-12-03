@@ -28,6 +28,6 @@ public class AuthService : IAuthService
     public async Task<(string AccessToken, string RefreshToken)> AuthenticateUserAsync(UserForAuthenticationDto userForLogin)
         => await _authenticateUserUseCase.ExecuteAsync(userForLogin);
 
-    public async Task<TokenDto> RefreshToken(TokenDto tokenDto)
+    public async Task<string> RefreshToken(TokenDto tokenDto)
         => await _refreshTokenUseCase.ExecuteAsync(tokenDto);
 }

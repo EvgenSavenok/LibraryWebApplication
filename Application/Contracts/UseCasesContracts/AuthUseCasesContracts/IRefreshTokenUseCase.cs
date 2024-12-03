@@ -4,5 +4,5 @@ namespace Application.Contracts.UseCasesContracts.AuthUseCasesContracts;
 
 public interface IRefreshTokenUseCase
 {
-    public Task<TokenDto> ExecuteAsync(TokenDto tokenDto);
+    public Task<string> ExecuteAsync(TokenDto tokenDto);
 }

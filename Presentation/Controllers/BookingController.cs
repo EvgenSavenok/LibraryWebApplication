@@ -55,22 +55,20 @@ public class BookingController : Controller
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        var reservedBooks = await _borrowService.GetAllUserBookBorrowsAsync(requestParameters, userId);
-        var totalBooks = await _borrowService.CountBorrowsAsync(requestParameters); 
-        var totalPages = (int)Math.Ceiling((double)totalBooks / requestParameters.PageSize);
+        var pagedResult = await _borrowService.GetAllUserBookBorrowsAsync(requestParameters, userId);
 
-        if (reservedBooks == null || !reservedBooks.Any())
+        if (pagedResult == null)
         {
             return View("~/Views/Booking/NoReservedBooksPage.cshtml"); 
         }
         
-        var response = new
+        return Ok(new
         {
-            reservedBooks,
-            currentPage = requestParameters.PageNumber,
-            totalPages
-        };
-        return Ok(response);
+            reservedBooks = pagedResult.Items,
+            currentPage = pagedResult.CurrentPage,
+            totalPages = pagedResult.TotalPages,
+            totalBooks = pagedResult.TotalCount
+        });
     }
 
     [HttpPost("take/{id}")]

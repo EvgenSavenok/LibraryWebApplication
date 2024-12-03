@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Repository;
+namespace Infrastructure;
 
 public class AuthenticationManager : IAuthenticationManager
 {
@@ -40,7 +40,7 @@ public class AuthenticationManager : IAuthenticationManager
             return Convert.ToBase64String(randomNumber);
         }
     }
-    public async Task<TokenDto> CreateToken(User user, bool populateExp)
+    public async Task<TokenDto> CreateTokens(User user, bool populateExp)
     {
         const int refreshTokenLifeTime = 10;
         _user = user;
@@ -54,7 +54,19 @@ public class AuthenticationManager : IAuthenticationManager
             _user.RefreshTokenExpireTime = DateTime.UtcNow.AddMinutes(refreshTokenLifeTime);
         await _userManager.UpdateAsync(_user);
         var accessToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-        return new TokenDto(accessToken, refreshToken);
+        return new TokenDto(accessToken, refreshToken) { };
+    }
+
+    public async Task<string> CreateAccessToken(User user)
+    {
+        _user = user;
+        var signingCredentials = GetSigningCredentials();
+        var claims = await GetClaims();
+        var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
+        
+        await _userManager.UpdateAsync(_user);
+        var accessToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+        return accessToken;
     }
     private SigningCredentials GetSigningCredentials()
     {

@@ -16,7 +16,7 @@ public class TokenController : Controller
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh([FromBody] TokenDto tokenDto)
     {
-        var tokenDtoToReturn = await _authService.RefreshToken(tokenDto);
-        return Ok(tokenDtoToReturn);
+        string accessToken = await _authService.RefreshToken(tokenDto);
+        return Ok(accessToken);
     }
 }

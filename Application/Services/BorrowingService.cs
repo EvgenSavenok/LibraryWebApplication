@@ -27,7 +27,7 @@ public class BorrowingService : IBookingService
         _getUserBorrowUseCase = getUserBorrowUseCase;
     }
 
-    public async Task<IEnumerable<UserBookBorrow>> GetAllUserBookBorrowsAsync(BorrowParameters requestParameters, string userId)
+    public async Task<PagedResult<UserBookBorrow>> GetAllUserBookBorrowsAsync(BorrowParameters requestParameters, string userId)
         => await _getUsersBorowsUseCase.ExecuteAsync(requestParameters, userId);
 
     public async Task<UserBookBorrowDto> GetUserBookBorrowAsync(int id)

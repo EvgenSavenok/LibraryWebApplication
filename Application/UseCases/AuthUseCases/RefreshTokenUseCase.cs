@@ -5,6 +5,7 @@ using Application.Contracts.UseCasesContracts.AuthUseCasesContracts;
 using Domain.Contracts;
 using Domain.Entities.AuthDto;
 using Domain.Entities.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -55,15 +56,15 @@ public class RefreshTokenUseCase : IRefreshTokenUseCase
         return principal;
     }
     
-    public async Task<TokenDto> ExecuteAsync(TokenDto tokenDto)
+    public async Task<string> ExecuteAsync(TokenDto tokenDto)
     {
         var principal = GetPrincipalFromExpiredToken(tokenDto.AccessToken);
         var user = await _userManager.FindByNameAsync(principal.Identity.Name);
         if (user is null || user.RefreshToken != tokenDto.RefreshToken ||
             user.RefreshTokenExpireTime <= DateTime.UtcNow)
         {
-            return null;
+            throw new UnauthorizedAccessException("Invalid refresh token or token expired.");
         }
-        return await _authManager.CreateToken(user, populateExp: false);
+        return await _authManager.CreateAccessToken(user);
     }
 }
