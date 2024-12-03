@@ -65,7 +65,8 @@
                 });              
                 if (response.ok) {  
                     const result = await response.json();
-                    displayAuthors(result.authors);
+                    const authors = result.authors;
+                    displayAuthors(authors);
                     displayPagination(result.currentPage, result.totalPages);
                 } else {
                     document.getElementById('authorsTableBody').innerHTML = "<tr><td colspan='7'>Failed to load authors. Please login again.</td></tr>";

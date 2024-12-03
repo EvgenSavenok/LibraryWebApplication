@@ -30,17 +30,14 @@ public class BooksController : Controller
     [HttpGet("GetBooks"), Authorize]
     public async Task<IActionResult> GetBooks([FromQuery] BookParameters requestParameters)
     {
-        var books = await _bookService.GetBooksAsync(requestParameters);
-        var totalBooks = await _bookService.CountBooksAsync(requestParameters);
-        var totalPages = (int)Math.Ceiling((double)totalBooks / requestParameters.PageSize);
-        
-        var response = new
+        var pagedResult = await _bookService.GetBooksAsync(requestParameters);
+        return Ok(new
         {
-            books,
-            currentPage = requestParameters.PageNumber,
-            totalPages
-        };
-        return Ok(response);
+            books = pagedResult.Items,
+            currentPage = pagedResult.CurrentPage,
+            totalPages = pagedResult.TotalPages,
+            totalBooks = pagedResult.TotalCount
+        });
     }
 
     [HttpGet("{id}", Name = "BookById"), Authorize]
@@ -61,25 +58,15 @@ public class BooksController : Controller
                 Selected = g == BookGenre.Adventures 
             }).ToList();
         
-        var authors = await _authorService.GetAllAuthorsAsync(null); 
-        var authorSelectList = authors.Select((a, index) => new SelectListItem
-        {
-            Text = $"{a.Name} {a.LastName}",
-            Value = a.Id.ToString(),  
-            Selected = index == 0  
-        }).ToList();
-        
+        var authorsResult = await _authorService.GetAllAuthorsAsync(new AuthorParameters() { PageSize = 10}); 
         ViewBag.Genres = genres; 
-        ViewBag.Authors = authorSelectList;
+        ViewBag.Authors = authorsResult.Items; 
         return View("~/Views/Books/AddBookPage.cshtml");
     }
 
     [HttpPost("add"), Authorize]
     public async Task<IActionResult> CreateBook([FromBody] BookForCreationDto book)
     {
-        if (!ModelState.IsValid)
-            return UnprocessableEntity(ModelState);
-
         await _bookService.CreateBookAsync(book);
         return Ok();
     }
@@ -96,16 +83,9 @@ public class BooksController : Controller
                 Selected = g == bookDto.Genre
             }).ToList();
     
-        var authors = await _authorService.GetAllAuthorsAsync(null);
-        var authorSelectList = authors.Select(a => new SelectListItem
-        {
-            Text = $"{a.Name} {a.LastName}",
-            Value = a.Id.ToString(), 
-            Selected = a.Id == bookDto.AuthorId
-        }).ToList();
-
-        ViewBag.Genres = genres;
-        ViewBag.Authors = authorSelectList;
+        var authorsResult = await _authorService.GetAllAuthorsAsync(new AuthorParameters() { PageSize = 10}); 
+        ViewBag.Genres = genres; 
+        ViewBag.Authors = authorsResult.Items; 
         return View("~/Views/Books/EditBookPage.cshtml", bookDto);
     }
 

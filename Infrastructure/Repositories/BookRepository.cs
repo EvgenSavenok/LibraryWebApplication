@@ -1,9 +1,9 @@
 ﻿using Domain.Contracts;
 using Domain.Entities.Models;
 using Domain.Entities.RequestFeatures;
+using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Repository;
-using Repository.Extensions;
 using Repository.Repositories;
 
 namespace Infrastructure.Repositories;

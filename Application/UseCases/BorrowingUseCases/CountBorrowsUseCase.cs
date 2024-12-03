@@ -1,5 +1,6 @@
 ﻿using Application.Contracts;
 using Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
+using Application.Validation;
 using AutoMapper;
 using Domain.Entities.RequestFeatures;
 
@@ -9,15 +10,25 @@ public class CountBorrowsUseCase : ICountBorrowsUseCase
 {
     private readonly IRepositoryManager _repository;
     private readonly IMapper _mapper;
+    private readonly ILoggerManager _logger;
 
-    public CountBorrowsUseCase(IRepositoryManager repository, IMapper mapper)
+    public CountBorrowsUseCase(IRepositoryManager repository, 
+        IMapper mapper,
+        ILoggerManager logger)
     {
         _repository = repository;
         _mapper = mapper;
+        _logger = logger;
     }
 
     public async Task<int> ExecuteAsync(BorrowParameters borrowParameters)
     {
-        return await _repository.Borrow.CountBorrowsAsync(borrowParameters);
+        Task<int> countOfBorrowsAsync = _repository.Borrow.CountBorrowsAsync(borrowParameters);
+        if (countOfBorrowsAsync == null)
+        {
+            _logger.LogInfo("Cannot count number of borrows.");
+            throw new ConflictException("Cannot count number of borrows.");
+        }
+        return await countOfBorrowsAsync;
     }
 }

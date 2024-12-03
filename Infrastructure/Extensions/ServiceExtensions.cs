@@ -19,9 +19,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Repository;
 using Repository.Repositories;
 
-namespace Repository.Extensions;
+namespace Infrastructure.Extensions;
 
 public static class ServiceExtensions
 {
@@ -115,7 +116,8 @@ public static class ServiceExtensions
         
         //Validation use cases
         services.AddValidatorsFromAssemblyContaining<BookValidator>();
-        
+        services.AddValidatorsFromAssemblyContaining<AuthorValidator>();
+        services.AddValidatorsFromAssemblyContaining<BorrowingValidator>();
         
         return services;
     }

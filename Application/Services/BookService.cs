@@ -31,7 +31,7 @@ public class BookService : IBookService
         _countBooksUseCase = countBooksUseCase;
     }
 
-    public async Task<IEnumerable<BookDto>> GetBooksAsync(BookParameters bookParameters)
+    public async Task<PagedResult<BookDto>> GetBooksAsync(BookParameters bookParameters)
         => await _getBooksUseCase.ExecuteAsync(bookParameters);
 
     public async Task<BookDto> GetBookByIdAsync(int bookId)

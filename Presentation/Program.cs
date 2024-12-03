@@ -9,7 +9,6 @@ using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using Repository;
-using Repository.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

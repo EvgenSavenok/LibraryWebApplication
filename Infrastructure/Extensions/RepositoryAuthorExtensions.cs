@@ -1,6 +1,6 @@
 ﻿using Domain.Entities.Models;
 
-namespace Repository.Extensions;
+namespace Infrastructure.Extensions;
 
 public static class RepositoryAuthorExtensions
 {

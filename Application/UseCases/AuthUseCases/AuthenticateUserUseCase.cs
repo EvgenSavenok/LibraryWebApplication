@@ -30,6 +30,10 @@ public class AuthenticateUserUseCase : IAuthenticateUserUseCase
         }
         await _authManager.ValidateUser(userForLogin);
         var tokenDto = await _authManager.CreateToken(user, populateExp: true);
+        if (tokenDto.AccessToken == null || tokenDto.RefreshToken == null)
+        {
+            throw new UnauthorizedAccessException();
+        }
         return (tokenDto.AccessToken, tokenDto.RefreshToken);
     }
 }

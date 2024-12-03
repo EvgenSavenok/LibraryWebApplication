@@ -42,15 +42,7 @@ public class AuthenticationController : Controller
     [HttpPost("login")]
     public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto userForLogin)
     {
-        if (userForLogin == null || !ModelState.IsValid)
-        {
-            return BadRequest("Invalid login request");
-        }
         var (accessToken, refreshToken) = await _authService.AuthenticateUserAsync(userForLogin);
-        if (accessToken == null || refreshToken == null)
-        {
-            return Unauthorized();
-        }
         return Ok(new { AccessToken = accessToken, RefreshToken = refreshToken });
     }
 }

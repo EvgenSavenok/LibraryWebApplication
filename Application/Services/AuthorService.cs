@@ -32,7 +32,7 @@ namespace Application.Services
             _getAuthorByIdUseCase = getAuthorByIdUseCase;
             _updateAuthorUseCase = updateAuthorUseCase;
         }
-        public async Task<IEnumerable<AuthorDto>> GetAllAuthorsAsync(AuthorParameters requestParameters)
+        public async Task<PagedResult<AuthorDto>> GetAllAuthorsAsync(AuthorParameters requestParameters)
             => await _getAllAuthorsUseCase.ExecuteAsync(requestParameters);
 
         public async Task<AuthorDto> GetAuthorByIdAsync(int id)

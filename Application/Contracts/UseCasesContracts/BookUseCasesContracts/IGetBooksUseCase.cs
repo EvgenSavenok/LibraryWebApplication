@@ -5,5 +5,5 @@ namespace Application.Contracts.UseCasesContracts.BookUseCasesContracts;
 
 public interface IGetBooksUseCase
 {
-    public Task<IEnumerable<BookDto>> ExecuteAsync(BookParameters bookParameters);
+    public Task<PagedResult<BookDto>> ExecuteAsync(BookParameters bookParameters);
 }

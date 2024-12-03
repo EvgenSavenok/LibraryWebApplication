@@ -5,5 +5,5 @@ namespace Application.Contracts.UseCasesContracts.AuthorUseCasesContracts;
 
 public interface IGetAllAuthorsUseCase
 {
-    public Task<IEnumerable<AuthorDto>> ExecuteAsync(AuthorParameters requestParameters);
+    public Task<PagedResult<AuthorDto>> ExecuteAsync(AuthorParameters authorParameters);
 }

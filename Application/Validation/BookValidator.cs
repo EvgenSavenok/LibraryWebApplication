@@ -10,6 +10,7 @@ public class BookValidator : AbstractValidator<Book>
         RuleFor(book => book.ISBN)
             .NotEmpty().WithMessage("ISBN is required.")
             .Length(13).WithMessage("ISBN must be exactly 13 characters.");
+        
         RuleFor(book => book.BookTitle)
             .NotEmpty().WithMessage("Book title is required.")
             .MaximumLength(50).WithMessage("Book title cannot exceed 50 characters.");

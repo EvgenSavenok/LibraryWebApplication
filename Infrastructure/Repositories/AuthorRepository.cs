@@ -2,8 +2,8 @@
 using Domain.Entities;
 using Domain.Entities.Models;
 using Domain.Entities.RequestFeatures;
+using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Repository.Extensions;
 
 namespace Repository.Repositories;
 
@@ -17,7 +17,6 @@ public class AuthorRepository : RepositoryBase<Author>, IAuthorRepository
     public async Task<int> CountAuthorsAsync(AuthorParameters authorParameters)
     {
         var query = FindByCondition(b => true, trackChanges: false);
-        query = query.Search(authorParameters.SearchTerm);
         return await query.CountAsync();
     }
 

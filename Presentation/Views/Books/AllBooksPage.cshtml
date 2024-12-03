@@ -208,14 +208,15 @@
                 if (response.ok) {
                     const result = await response.json();
                     const authors = result.authors;
+                    
                     const authorSelect = document.getElementById('authorFilter');
 
                     authorSelect.innerHTML = '<option value="">All Authors</option>';
-                    
+
                     authors.forEach(author => {
                         const option = document.createElement('option');
                         option.value = author.id;
-                        option.text = `${author.name} ${author.lastName}`;
+                        option.textContent = `${author.name} ${author.lastName}`;
                         authorSelect.appendChild(option);
                     });
                 } else {

@@ -27,18 +27,14 @@ public class AuthorsController : Controller
     [HttpGet("GetAuthors")]
     public async Task<IActionResult> GetAuthors([FromQuery] AuthorParameters requestParameters)
     {
-        var authors = await _authorService.GetAllAuthorsAsync(requestParameters);
-        var totalAuthors = await _authorService.CountAuthorsAsync(requestParameters);
-        var totalPages = (int)Math.Ceiling((double)totalAuthors / requestParameters.PageSize);
-        
-        var response = new
+        var pagedResult = await _authorService.GetAllAuthorsAsync(requestParameters);
+        return Ok(new
         {
-            authors,
-            currentPage = requestParameters.PageNumber,
-            totalPages
-        };
-
-        return Ok(response);
+            authors = pagedResult.Items,
+            currentPage = pagedResult.CurrentPage,
+            totalPages = pagedResult.TotalPages,
+            totalBooks = pagedResult.TotalCount
+        });
     }
 
     [HttpGet("AddAuthor")]
@@ -50,10 +46,6 @@ public class AuthorsController : Controller
     [HttpPost("add")]
     public async Task<IActionResult> CreateAuthor([FromBody] AuthorForCreationDto author)
     {
-        if (!ModelState.IsValid)
-        {
-            return UnprocessableEntity(ModelState);
-        }
         await _authorService.CreateAuthorAsync(author);
         return Ok();
     }
@@ -75,10 +67,6 @@ public class AuthorsController : Controller
     [HttpPut("{id}", Name = "UpdateAuthor")]
     public async Task<IActionResult> UpdateAuthor(int id, [FromBody] AuthorForUpdateDto authorDto)
     {
-        if (!ModelState.IsValid)
-        {
-            return UnprocessableEntity(ModelState);
-        }
         await _authorService.UpdateAuthorAsync(id, authorDto);
         return NoContent();
     }
