@@ -27,7 +27,8 @@ public class BooksController : Controller
         return View("~/Views/Books/AllBooksPage.cshtml");
     }
 
-    [HttpGet("GetBooks"), Authorize]
+    [HttpGet("GetBooks")]
+    [Authorize(Policy = "AdminOrUser")]
     public async Task<IActionResult> GetBooks([FromQuery] BookParameters requestParameters)
     {
         var pagedResult = await _bookService.GetBooksAsync(requestParameters);
@@ -40,7 +41,7 @@ public class BooksController : Controller
         });
     }
 
-    [HttpGet("{id}", Name = "BookById"), Authorize]
+    [HttpGet("{id}", Name = "BookById"), Authorize(Policy = "Admin")]
     public async Task<IActionResult> GetBook(int id)
     {
         var book = await _bookService.GetBookByIdAsync(id);
@@ -64,7 +65,7 @@ public class BooksController : Controller
         return View("~/Views/Books/AddBookPage.cshtml");
     }
 
-    [HttpPost("add"), Authorize]
+    [HttpPost("add"), Authorize(Policy = "Admin")]
     public async Task<IActionResult> CreateBook([FromBody] BookForCreationDto book)
     {
         await _bookService.CreateBookAsync(book);
@@ -90,14 +91,14 @@ public class BooksController : Controller
     }
 
 
-    [HttpPut("{id}", Name = "UpdateBook"), Authorize]
+    [HttpPut("{id}", Name = "UpdateBook"), Authorize(Policy = "Admin")]
     public async Task<IActionResult> UpdateBook(int id, [FromBody] BookForUpdateDto bookDto)
     {
         await _bookService.UpdateBookAsync(id, bookDto);
         return NoContent();
     }
 
-    [HttpDelete("delete/{id}"), Authorize]
+    [HttpDelete("delete/{id}"), Authorize(Policy = "Admin")]
     public async Task<IActionResult> DeleteBook(int id)
     {
         await _bookService.DeleteBookAsync(id);

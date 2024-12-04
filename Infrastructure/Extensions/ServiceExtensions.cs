@@ -155,4 +155,15 @@ public static class ServiceExtensions
     
     public static void ConfigureLoggerService(this IServiceCollection services) =>
         services.AddSingleton<ILoggerManager, LoggerManager>();
+
+    public static void AddAuthorizationPolicy(this IServiceCollection services) =>
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("Admin", policy =>
+                policy.RequireRole("Administrator")); 
+            options.AddPolicy("User", policy =>
+                policy.RequireRole("User")); 
+            options.AddPolicy("AdminOrUser", policy =>
+                policy.RequireRole("Administrator", "User"));
+        });
 }

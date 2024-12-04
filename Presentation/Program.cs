@@ -1,15 +1,12 @@
 using System.Text.Json.Serialization;
-using Application;
 using Application.Contracts;
 using Application.Contracts.ServicesContracts;
 using Application.Services;
-using AutoMapper;
 using Domain.Contracts;
 using Infrastructure;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
-using Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +16,7 @@ builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAuthentication();
+builder.Services.AddAuthorizationPolicy();
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureJwt(builder.Configuration);
 builder.Services.AddUseCases();

@@ -3,6 +3,7 @@ using Application.Contracts;
 using Application.Contracts.ServicesContracts;
 using Application.DataTransferObjects;
 using Domain.Entities.RequestFeatures;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
@@ -71,7 +72,7 @@ public class BookingController : Controller
         });
     }
 
-    [HttpPost("take/{id}")]
+    [HttpPost("take/{id}"), Authorize(Policy = "User")]
     public async Task<IActionResult> TakeBook(int id)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

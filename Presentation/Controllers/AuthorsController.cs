@@ -43,14 +43,14 @@ public class AuthorsController : Controller
         return View("~/Views/Authors/AddAuthorPage.cshtml");
     }
 
-    [HttpPost("add")]
+    [HttpPost("add"), Authorize(Policy = "Admin")]
     public async Task<IActionResult> CreateAuthor([FromBody] AuthorForCreationDto author)
     {
         await _authorService.CreateAuthorAsync(author);
         return Ok();
     }
 
-    [HttpDelete("delete/{id}")]
+    [HttpDelete("delete/{id}"), Authorize(Policy = "Admin")]
     public async Task<IActionResult> DeleteAuthor(int id)
     {
         await _authorService.DeleteAuthorAsync(id);
@@ -64,7 +64,7 @@ public class AuthorsController : Controller
         return View("~/Views/Authors/EditAuthorPage.cshtml", authorDto);
     }
 
-    [HttpPut("{id}", Name = "UpdateAuthor")]
+    [HttpPut("{id}", Name = "UpdateAuthor"), Authorize(Policy = "Admin")]
     public async Task<IActionResult> UpdateAuthor(int id, [FromBody] AuthorForUpdateDto authorDto)
     {
         await _authorService.UpdateAuthorAsync(id, authorDto);
