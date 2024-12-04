@@ -96,7 +96,7 @@
                     displayBooks(result.books);                   
                     displayPagination(result.currentPage, result.totalPages);
                 } else {
-                    document.getElementById('booksTableBody').innerHTML = "<tr><td colspan='7'>Failed to load books. Please login again.</td></tr>";
+                    document.getElementById('booksTableBody').innerHTML = "<tr><td colspan='7'>Failed to load books. Please log again.</td></tr>";
                 }
             } catch (error) {
                 document.getElementById('booksTableBody').innerHTML = "<tr><td colspan='7'>Error loading books. Please try again later.</td></tr>";
