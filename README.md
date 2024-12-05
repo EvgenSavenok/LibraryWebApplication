@@ -6,12 +6,12 @@
 ### 3) Using command prompt go the solution directory and write some commands.
 This will create Migrations folder in project Entities and add new migration files there.
 ```bash
-dotnet ef migrations add NameOfMigration --project Entities --startup-project Infrastructure
+dotnet ef migrations add NameOfMigration --project Infrastructure --startup-project Presentation
 ```
 
 This command will create database according to the last migration:
 ```bash
-dotnet ef database update --project Entities --startup-project Infrastructure
+dotnet ef database update --project Infrastructure --startup-project Presentation
 ```
 After that database will appear on your machine and you will can run this application through exe-file or IDE.
 
