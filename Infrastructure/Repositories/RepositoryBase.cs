@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
 using Domain.Contracts;
-using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Repository;
 
-namespace Repository.Repositories;
+namespace Infrastructure.Repositories;
 
 public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
 {
@@ -28,4 +28,23 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
     public void Create(T entity) => RepositoryContext.Set<T>().Add(entity);
     public void Update(T entity) => RepositoryContext.Set<T>().Update(entity);
     public void Delete(T entity) => RepositoryContext.Set<T>().Remove(entity);
+    public async Task<IEnumerable<T>> GetBySpecificationAsync(ISpecification<T> specification, bool trackChanges)
+    {
+        IQueryable<T> query = RepositoryContext.Set<T>();
+
+        if (specification.Criteria != null)
+            query = query.Where(specification.Criteria);
+
+        if (specification.OrderBy != null)
+            query = specification.OrderBy(query);
+
+        if (specification.Includes != null)
+            query = specification.Includes(query);
+
+        query = query
+            .Skip((specification.PageNumber - 1) * specification.PageSize)
+            .Take(specification.PageSize);
+
+        return await query.ToListAsync();
+    }
 }
