@@ -6,17 +6,17 @@ namespace Domain.Entities.Specifications;
 
 public class BookSpecification : BaseSpecification<Book>
 {
-    public BookSpecification(BookParameters parameters)
+    public BookSpecification(BookParameters bookParameters)
     {
         ApplyCriteria(book =>
-            (parameters.Genre == 0 || book.Genre == parameters.Genre) &&
-            (parameters.AuthorId == 0 || book.Author.Id == parameters.AuthorId));
+            (bookParameters.Genre == 0 || book.Genre == bookParameters.Genre) &&
+            (bookParameters.AuthorId == 0 || book.Author.Id == bookParameters.AuthorId));
 
         ApplyOrderBy(books => books.OrderBy(book => book.BookTitle));
         Includes = q => q.Include(b => b.Author);
 
-        PageSize = parameters.PageSize;
-        PageNumber = parameters.PageNumber;
+        PageSize = bookParameters.PageSize;
+        PageNumber = bookParameters.PageNumber;
     }
 }
 

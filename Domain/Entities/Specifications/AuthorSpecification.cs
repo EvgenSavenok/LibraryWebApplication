@@ -15,6 +15,8 @@ namespace Domain.Entities.Specifications
                 ApplyCriteria(a => a.LastName.Contains(authorParameters.SearchTerm) || a.Name.Contains(authorParameters.SearchTerm));
             }
             
+            ApplyOrderBy(a => a.OrderBy(author => author.LastName));
+            
             PageSize = authorParameters.PageSize;
             PageNumber = authorParameters.PageNumber;
         }

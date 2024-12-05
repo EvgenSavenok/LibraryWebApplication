@@ -1,12 +1,12 @@
 ﻿using Domain.Contracts;
-using Domain.Entities;
 using Domain.Entities.Models;
 using Domain.Entities.RequestFeatures;
+using Domain.Entities.Specifications;
 using Infrastructure.Extensions;
-using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Repository;
 
-namespace Repository.Repositories;
+namespace Infrastructure.Repositories;
 
 public class AuthorRepository : RepositoryBase<Author>, IAuthorRepository
 {
@@ -17,33 +17,15 @@ public class AuthorRepository : RepositoryBase<Author>, IAuthorRepository
 
     public async Task<int> CountAuthorsAsync(AuthorParameters authorParameters)
     {
-        var query = FindByCondition(b => true, trackChanges: false);
-        return await query.CountAsync();
+        var specification = new AuthorSpecification(authorParameters) { PageNumber = 1, PageSize = int.MaxValue };
+        var authors = await GetBySpecificationAsync(specification, trackChanges: false);
+        return authors.Count();
     }
 
-    public async Task<IEnumerable<Author>> GetAllAuthorsAsync(AuthorParameters authorParameters, 
-        bool trackChanges)
+    public async Task<IEnumerable<Author>> GetAllAuthorsAsync(AuthorParameters authorParameters, bool trackChanges)
     {
-        var authors = FindByCondition(a => true, trackChanges);
-
-        if (authorParameters != null)
-        {
-            if (!string.IsNullOrEmpty(authorParameters.SearchTerm))
-            {
-                authors = authors.Search(authorParameters.SearchTerm); 
-            }
-
-            authors = authors
-                .OrderBy(a => a.LastName)
-                .Skip((authorParameters.PageNumber - 1) * authorParameters.PageSize)
-                .Take(authorParameters.PageSize);
-        }
-        else
-        {
-            authors = authors.OrderBy(a => a.LastName);
-        }
-
-        return await authors.ToListAsync();
+        var specification = new AuthorSpecification(authorParameters);
+        return await GetBySpecificationAsync(specification, trackChanges);
     }
 
     public async Task<Author> GetAuthorAsync(int authorId, bool trackChanges) =>

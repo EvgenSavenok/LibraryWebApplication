@@ -6,10 +6,10 @@ using Domain.Entities.Models;
 using Domain.Entities.RequestFeatures;
 using FluentAssertions;
 using FluentValidation;
+using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Repository;
-using Repository.Repositories;
 
 namespace Tests;
 

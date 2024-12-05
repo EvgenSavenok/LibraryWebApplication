@@ -1,9 +1,8 @@
 ﻿using Application.Contracts;
 using Domain.Contracts;
-using Domain.Entities;
-using Infrastructure.Repositories;
+using Repository;
 
-namespace Repository.Repositories;
+namespace Infrastructure.Repositories;
 
 public class RepositoryManager : IRepositoryManager
 {

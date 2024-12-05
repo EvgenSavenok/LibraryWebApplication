@@ -12,6 +12,7 @@ using Application.Validation;
 using Domain.Entities.Models;
 using FluentValidation;
 using Infrastructure.Logging;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Repository;
-using Repository.Repositories;
 
 namespace Infrastructure.Extensions;
 

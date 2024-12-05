@@ -1,11 +1,11 @@
 ﻿using Domain.Contracts;
-using Domain.Entities;
 using Domain.Entities.Models;
 using Domain.Entities.RequestFeatures;
-using Infrastructure.Repositories;
+using Domain.Entities.Specifications;
 using Microsoft.EntityFrameworkCore;
+using Repository;
 
-namespace Repository.Repositories;
+namespace Infrastructure.Repositories;
 
 public class UserBookBorrowRepository : RepositoryBase<UserBookBorrow>, IUserBookBorrowRepository
 {
@@ -14,27 +14,20 @@ public class UserBookBorrowRepository : RepositoryBase<UserBookBorrow>, IUserBoo
     {
     }
 
-    public async Task<IEnumerable<UserBookBorrow>> GetAllUserBookBorrowsAsync(bool trackChanges) =>
-        await FindAll(trackChanges).ToListAsync();
-
     public async Task<UserBookBorrow> GetUserBookBorrowAsync(int id, bool trackChanges) =>
         await FindByCondition(b => b.Id == id, trackChanges).SingleOrDefaultAsync();
 
-    public async Task<IEnumerable<UserBookBorrow>> GetAllUserBookBorrowsAsync
-        (BorrowParameters borrowParameters, string userId, bool trackChanges)
+    public async Task<IEnumerable<UserBookBorrow>> GetAllUserBookBorrowsAsync(BorrowParameters borrowParameters, string userId, bool trackChanges)
     {
-        return await FindByCondition(borrow => borrow.UserId == userId, trackChanges)
-            .Include(borrow => borrow.Book)
-            .ThenInclude(book => book.Author)
-            .Skip((borrowParameters.PageNumber - 1) * borrowParameters.PageSize)
-            .Take(borrowParameters.PageSize)
-            .ToListAsync();
+        var specification = new BorrowSpecification(borrowParameters, userId);
+        return await GetBySpecificationAsync(specification, trackChanges);
     }
     
     public async Task<int> CountBorrowsAsync(BorrowParameters borrowParameters)
     {
-        var query = FindByCondition(b => true, trackChanges: false);
-        return await query.CountAsync();
+        var specification = new BorrowSpecification(borrowParameters, null);
+        var borrows = await GetBySpecificationAsync(specification, trackChanges: false);
+        return borrows.Count();
     }
 }
 

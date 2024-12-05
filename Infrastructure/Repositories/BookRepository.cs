@@ -5,7 +5,6 @@ using Domain.Entities.Specifications;
 using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Repository;
-using Repository.Repositories;
 
 namespace Infrastructure.Repositories;
 
