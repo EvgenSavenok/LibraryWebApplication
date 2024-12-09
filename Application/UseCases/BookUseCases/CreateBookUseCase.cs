@@ -2,6 +2,7 @@
 using Application.Contracts.UseCasesContracts.BookUseCasesContracts;
 using Application.DataTransferObjects;
 using Application.Validation;
+using Application.Validation.CustomExceptions;
 using AutoMapper;
 using Domain.Entities.Models;
 using FluentValidation;
@@ -37,8 +38,7 @@ public class CreateBookUseCase : ICreateBookUseCase
         var existingBook = await _repository.Book.GetBookByIsbnAsync(bookEntity.ISBN);
         if (existingBook != null)
         {
-            _logger.LogInfo($"Book with id: {bookEntity.Id} already exists in the database.");
-            throw new ConflictException("A book with this ISBN already exists.");
+            throw new AlreadyExistsException("A book with this ISBN already exists.");
         }
         _repository.Book.Create(bookEntity);
         await _repository.SaveAsync();

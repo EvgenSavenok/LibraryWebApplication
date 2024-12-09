@@ -26,7 +26,6 @@ public class GetAuthorByIdUseCase : IGetAuthorByIdUseCase
         var author = await _repository.Author.GetAuthorAsync(id, trackChanges: false);
         if (author == null)
         {
-            _logger.LogInfo($"Author with id: {id} doesn't exist in the database.");
             throw new NotFoundException($"Author with id {id} not found.");
         }
         return _mapper.Map<AuthorDto>(author);

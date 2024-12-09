@@ -1,5 +1,6 @@
 ﻿using Application.Contracts;
 using Application.Contracts.UseCasesContracts.AuthUseCasesContracts;
+using Application.Validation.CustomExceptions;
 using Domain.Contracts;
 using Domain.Entities.AuthDto;
 using Domain.Entities.Models;
@@ -32,7 +33,7 @@ public class AuthenticateUserUseCase : IAuthenticateUserUseCase
         var tokenDto = await _authManager.CreateTokens(user, populateExp: true);
         if (tokenDto.AccessToken == null || tokenDto.RefreshToken == null)
         {
-            throw new UnauthorizedAccessException();
+            throw new UnauthorizedException("Cannot create access or refresh token");
         }
         return (tokenDto.AccessToken, tokenDto.RefreshToken);
     }

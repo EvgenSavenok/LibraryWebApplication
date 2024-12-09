@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
-using Application.Contracts;
-using Application.Contracts.ServicesContracts;
+using Application.Contracts.UseCasesContracts.AuthorUseCasesContracts;
+using Application.Contracts.UseCasesContracts.BookUseCasesContracts;
+using Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
 using Application.DataTransferObjects;
 using Domain.Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
@@ -12,16 +13,23 @@ namespace Presentation.Controllers;
 [ApiController]
 public class BookingController : Controller
 {
-    private readonly IBookingService _borrowService;
-    private readonly IBookService _bookService;
-    private readonly IAuthorService _authorService;
-
-    public BookingController(IBookingService borrowService, IBookService bookService,
-        IAuthorService authorService)
+    private readonly IGetBookByIdUseCase _getBookByIdUseCase;
+    private readonly IUpdateBookUseCase _updateBookUseCase;
+    private readonly ICreateBorrowUseCase _createBorrowUseCase;
+    private readonly IGetUsersBorowsUseCase _getUsersBorowsUseCase;
+    private readonly IGetAuthorByIdUseCase _getAuthorByIdUseCase;
+    
+    public BookingController(IGetBookByIdUseCase getBookByIdUseCase,
+        IUpdateBookUseCase updateBookUseCase,
+        ICreateBorrowUseCase createBorrowUseCase,
+        IGetUsersBorowsUseCase getUsersBorowsUseCase,
+        IGetAuthorByIdUseCase getAuthorByIdUseCase)
     {
-        _borrowService = borrowService;
-        _bookService = bookService;
-        _authorService = authorService;
+        _getBookByIdUseCase = getBookByIdUseCase;
+        _updateBookUseCase = updateBookUseCase;
+        _createBorrowUseCase = createBorrowUseCase;
+        _getUsersBorowsUseCase = getUsersBorowsUseCase;
+        _getAuthorByIdUseCase = getAuthorByIdUseCase;
     }
 
     [HttpGet("user")]
@@ -33,8 +41,8 @@ public class BookingController : Controller
     [HttpGet("bookInfo/{id}")]
     public async Task<IActionResult> BookInfo(int id)
     {
-        var bookInfo = await _bookService.GetBookByIdAsync(id);
-        var authorInfo = await _authorService.GetAuthorByIdAsync(bookInfo.AuthorId);
+        var bookInfo = await _getBookByIdUseCase.ExecuteAsync(id);
+        var authorInfo = await _getAuthorByIdUseCase.ExecuteAsync(id);
         
         var bookInfoViewModel = new
         {
@@ -56,7 +64,7 @@ public class BookingController : Controller
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        var pagedResult = await _borrowService.GetAllUserBookBorrowsAsync(requestParameters, userId);
+        var pagedResult = await _getUsersBorowsUseCase.ExecuteAsync(requestParameters, userId);
 
         if (pagedResult == null)
         {
@@ -76,7 +84,7 @@ public class BookingController : Controller
     public async Task<IActionResult> TakeBook(int id)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var book = await _bookService.GetBookByIdAsync(id);
+        var book = await _getBookByIdUseCase.ExecuteAsync(id);
         var bookDto = new BookForUpdateDto
         {
             Amount = --book.Amount,
@@ -93,8 +101,8 @@ public class BookingController : Controller
             BorrowDate = DateTime.UtcNow,      
             ReturnDate = DateTime.UtcNow.AddDays(30)
         };
-        await _borrowService.CreateUserBookBorrowAsync(userBookBorrow);
-        await _bookService.UpdateBookAsync(id, bookDto);
+        await _createBorrowUseCase.ExecuteAsync(userBookBorrow);
+        await _updateBookUseCase.ExecuteAsync(id, bookDto);
         return Ok();
     }
 }

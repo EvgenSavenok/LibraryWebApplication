@@ -2,6 +2,7 @@
 using Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
 using Application.DataTransferObjects;
 using Application.Validation;
+using Application.Validation.CustomExceptions;
 using AutoMapper;
 
 namespace Application.UseCases.BorrowingUseCases;
@@ -26,8 +27,7 @@ public class GetUserBorrowUseCase : IGetUserBorrowUseCase
         var borrow = await _repository.Borrow.GetUserBookBorrowAsync(id, trackChanges: false);
         if (borrow == null)
         {
-            _logger.LogInfo("Cannot count number of borrows.");
-            throw new ConflictException("Cannot count number of borrows.");
+            throw new BadRequestException("Cannot count number of borrows.");
         }
         return _mapper.Map<UserBookBorrowDto>(borrow);
     }

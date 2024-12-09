@@ -1,4 +1,5 @@
-﻿using Application.Contracts.ServicesContracts;
+﻿using Application.Contracts.UseCasesContracts.AuthorUseCasesContracts;
+using Application.Contracts.UseCasesContracts.BookUseCasesContracts;
 using Application.DataTransferObjects;
 using Domain.Entities.Models;
 using Domain.Entities.RequestFeatures;
@@ -12,13 +13,28 @@ namespace Presentation.Controllers;
 [ApiController]
 public class BooksController : Controller
 {
-    private readonly IBookService _bookService;
-    private readonly IAuthorService _authorService;
+    private readonly IGetBooksUseCase _getBooksUseCase;
+    private readonly IGetBookByIdUseCase _getBookByIdUseCase;
+    private readonly ICreateBookUseCase _createBookUseCase;
+    private readonly IUpdateBookUseCase _updateBookUseCase;
+    private readonly IDeleteBookUseCase _deleteBookUseCase;
+    private readonly IGetAllAuthorsUseCase _getAllAuthorsUseCase;
 
-    public BooksController(IBookService bookService, IAuthorService authorService)
+    public BooksController(
+        IGetBooksUseCase getBooksUseCase,
+        IGetBookByIdUseCase getBookByIdUseCase,
+        ICreateBookUseCase createBookUseCase,
+        IUpdateBookUseCase updateBookUseCase,
+        IDeleteBookUseCase deleteBookUseCase,
+        ICountBooksUseCase countBooksUseCase,
+        IGetAllAuthorsUseCase getAllAuthorsUseCase)
     {
-        _bookService = bookService;
-        _authorService = authorService;
+        _getBooksUseCase = getBooksUseCase;
+        _getBookByIdUseCase = getBookByIdUseCase;
+        _createBookUseCase = createBookUseCase;
+        _updateBookUseCase = updateBookUseCase;
+        _deleteBookUseCase = deleteBookUseCase;
+        _getAllAuthorsUseCase = getAllAuthorsUseCase;
     }
     
     [HttpGet("admin")]
@@ -31,7 +47,7 @@ public class BooksController : Controller
     [Authorize(Policy = "AdminOrUser")]
     public async Task<IActionResult> GetBooks([FromQuery] BookParameters requestParameters)
     {
-        var pagedResult = await _bookService.GetBooksAsync(requestParameters);
+        var pagedResult = await _getBooksUseCase.ExecuteAsync(requestParameters);    
         return Ok(new
         {
             books = pagedResult.Items,
@@ -44,7 +60,7 @@ public class BooksController : Controller
     [HttpGet("{id}", Name = "BookById"), Authorize(Policy = "Admin")]
     public async Task<IActionResult> GetBook(int id)
     {
-        var book = await _bookService.GetBookByIdAsync(id);
+        var book = await _getBookByIdUseCase.ExecuteAsync(id);
         return Ok(book);
     }
     
@@ -58,8 +74,8 @@ public class BooksController : Controller
                 Value = g.ToString(),
                 Selected = g == BookGenre.Adventures 
             }).ToList();
-        
-        var authorsResult = await _authorService.GetAllAuthorsAsync(new AuthorParameters() { PageSize = 10}); 
+
+        var authorsResult = await _getAllAuthorsUseCase.ExecuteAsync(new AuthorParameters() { PageSize = 10});   
         ViewBag.Genres = genres; 
         ViewBag.Authors = authorsResult.Items; 
         return View("~/Views/Books/AddBookPage.cshtml");
@@ -68,14 +84,14 @@ public class BooksController : Controller
     [HttpPost("add"), Authorize(Policy = "Admin")]
     public async Task<IActionResult> CreateBook([FromBody] BookForCreationDto book)
     {
-        await _bookService.CreateBookAsync(book);
+        await _createBookUseCase.ExecuteAsync(book);
         return Ok();
     }
     
     [HttpGet("edit/{id}", Name = "EditBook")]
     public async Task<IActionResult> EditBook(int id)
     {
-        var bookDto = await _bookService.GetBookByIdAsync(id);
+        var bookDto = await _getBookByIdUseCase.ExecuteAsync(id);
         var genres = Enum.GetValues(typeof(BookGenre)).Cast<BookGenre>()
             .Select(g => new SelectListItem
             {
@@ -84,24 +100,23 @@ public class BooksController : Controller
                 Selected = g == bookDto.Genre
             }).ToList();
     
-        var authorsResult = await _authorService.GetAllAuthorsAsync(new AuthorParameters() { PageSize = 10}); 
+        var authorsResult = await _getAllAuthorsUseCase.ExecuteAsync(new AuthorParameters() { PageSize = 10 });
         ViewBag.Genres = genres; 
         ViewBag.Authors = authorsResult.Items; 
         return View("~/Views/Books/EditBookPage.cshtml", bookDto);
     }
 
-
     [HttpPut("{id}", Name = "UpdateBook"), Authorize(Policy = "Admin")]
     public async Task<IActionResult> UpdateBook(int id, [FromBody] BookForUpdateDto bookDto)
     {
-        await _bookService.UpdateBookAsync(id, bookDto);
+        await _updateBookUseCase.ExecuteAsync(id, bookDto);
         return NoContent();
     }
 
     [HttpDelete("delete/{id}"), Authorize(Policy = "Admin")]
     public async Task<IActionResult> DeleteBook(int id)
     {
-        await _bookService.DeleteBookAsync(id);
+        await _deleteBookUseCase.ExecuteAsync(id);
         return NoContent();
     }
 }

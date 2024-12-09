@@ -1,6 +1,7 @@
 ﻿using Application.Contracts;
 using Application.Contracts.UseCasesContracts.BookUseCasesContracts;
 using Application.Validation;
+using Application.Validation.CustomExceptions;
 using Domain.Entities.RequestFeatures;
 
 namespace Application.UseCases.BookUseCases;
@@ -21,8 +22,7 @@ public class CountBooksUseCase : ICountBooksUseCase
         Task<int> numOfBooks = _repository.Book.CountBooksAsync(requestParameters);
         if (numOfBooks == null)
         {
-            _logger.LogInfo("Cannot count number of books.");
-            throw new ConflictException("Cannot count number of books.");
+            throw new BadRequestException("Cannot count number of books.");
         }
         return await numOfBooks;
     }

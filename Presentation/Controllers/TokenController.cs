@@ -1,5 +1,4 @@
-﻿using Application.Contracts;
-using Application.Contracts.ServicesContracts;
+﻿using Application.Contracts.UseCasesContracts.AuthUseCasesContracts;
 using Domain.Entities.AuthDto;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,14 +8,16 @@ namespace Presentation.Controllers;
 [ApiController]
 public class TokenController : Controller
 {
-    private readonly IAuthService _authService;
+    private readonly IRefreshTokenUseCase _refreshTokenUseCase;
 
-    public TokenController(IAuthService authService) => _authService = authService;
-
+    public TokenController(IRefreshTokenUseCase refreshTokenUseCase)
+    {
+        _refreshTokenUseCase = refreshTokenUseCase;
+    }
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh([FromBody] TokenDto tokenDto)
     {
-        string accessToken = await _authService.RefreshToken(tokenDto);
+        string accessToken = await _refreshTokenUseCase.ExecuteAsync(tokenDto);
         return Ok(accessToken);
     }
 }

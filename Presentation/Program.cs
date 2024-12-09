@@ -1,7 +1,5 @@
 using System.Text.Json.Serialization;
 using Application.Contracts;
-using Application.Contracts.ServicesContracts;
-using Application.Services;
 using Domain.Contracts;
 using Infrastructure;
 using Infrastructure.Extensions;
@@ -21,10 +19,6 @@ builder.Services.ConfigureIdentity();
 builder.Services.ConfigureJwt(builder.Configuration);
 builder.Services.AddUseCases();
 builder.Services.AddScoped<IAuthenticationManager, AuthenticationManager>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IBookService, BookService>();
-builder.Services.AddScoped<IAuthorService, AuthorService>();
-builder.Services.AddScoped<IBookingService, BorrowingService>();
 
 builder.Services.ConfigureSwagger();
 

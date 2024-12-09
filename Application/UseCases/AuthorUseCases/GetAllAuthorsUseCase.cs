@@ -25,7 +25,6 @@ public class GetAllAuthorsUseCase : IGetAllAuthorsUseCase
         var authors = await _repository.Author.GetAllAuthorsAsync(authorParameters, trackChanges: false);
         if (authors == null || !authors.Any())
         {
-            _logger.LogInfo($"No authors found for the given parameters.");
             return new PagedResult<AuthorDto>
             {
                 Items = Enumerable.Empty<AuthorDto>(),

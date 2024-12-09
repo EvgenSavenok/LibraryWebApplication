@@ -1,6 +1,7 @@
 ﻿using Application.Contracts;
 using Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
 using Application.Validation;
+using Application.Validation.CustomExceptions;
 using AutoMapper;
 using Domain.Entities.RequestFeatures;
 
@@ -26,8 +27,7 @@ public class CountBorrowsUseCase : ICountBorrowsUseCase
         Task<int> countOfBorrowsAsync = _repository.Borrow.CountBorrowsAsync(borrowParameters);
         if (countOfBorrowsAsync == null)
         {
-            _logger.LogInfo("Cannot count number of borrows.");
-            throw new ConflictException("Cannot count number of borrows.");
+            throw new BadRequestException("Cannot count number of borrows.");
         }
         return await countOfBorrowsAsync;
     }

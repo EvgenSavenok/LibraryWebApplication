@@ -45,7 +45,6 @@ public class UpdateAuthorUseCase : IUpdateAuthorUseCase
         var authorEntity = await _repository.Author.GetAuthorAsync(id, trackChanges: true);
         if (authorEntity == null)
         {
-            _logger.LogInfo($"Author with id: {id} doesn't exist in the database.");
             throw new NotFoundException($"Author with id {id} not found.");
         }
         _mapper.Map(author, authorEntity);

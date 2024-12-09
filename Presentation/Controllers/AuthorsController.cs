@@ -1,5 +1,4 @@
-﻿using Application.Contracts;
-using Application.Contracts.ServicesContracts;
+﻿using Application.Contracts.UseCasesContracts.AuthorUseCasesContracts;
 using Application.DataTransferObjects;
 using Domain.Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
@@ -11,11 +10,24 @@ namespace Presentation.Controllers;
 [ApiController]
 public class AuthorsController : Controller
 {
-    private readonly IAuthorService _authorService;
+    private readonly ICreateAuthorUseCase _createAuthorUseCase;
+    private readonly IDeleteAuthorUseCase _deleteAuthorUseCase;
+    private readonly IGetAllAuthorsUseCase _getAllAuthorsUseCase;
+    private readonly IGetAuthorByIdUseCase _getAuthorByIdUseCase;
+    private readonly IUpdateAuthorUseCase _updateAuthorUseCase;
 
-    public AuthorsController(IAuthorService authorService)
+    public AuthorsController(ICountAuthorsUseCase countAuthorsUseCase,
+        ICreateAuthorUseCase createAuthorUseCase,
+        IDeleteAuthorUseCase deleteAuthorUseCase,
+        IGetAllAuthorsUseCase getAllAuthorsUseCase,
+        IGetAuthorByIdUseCase getAuthorByIdUseCase,
+        IUpdateAuthorUseCase updateAuthorUseCase)
     {
-        _authorService = authorService;
+        _createAuthorUseCase = createAuthorUseCase;
+        _deleteAuthorUseCase = deleteAuthorUseCase;
+        _getAllAuthorsUseCase = getAllAuthorsUseCase;
+        _getAuthorByIdUseCase = getAuthorByIdUseCase;
+        _updateAuthorUseCase = updateAuthorUseCase;
     }
 
     [HttpGet("authorsPage")]
@@ -27,7 +39,7 @@ public class AuthorsController : Controller
     [HttpGet("GetAuthors")]
     public async Task<IActionResult> GetAuthors([FromQuery] AuthorParameters requestParameters)
     {
-        var pagedResult = await _authorService.GetAllAuthorsAsync(requestParameters);
+        var pagedResult = await _getAllAuthorsUseCase.ExecuteAsync(requestParameters);
         return Ok(new
         {
             authors = pagedResult.Items,
@@ -46,28 +58,28 @@ public class AuthorsController : Controller
     [HttpPost("add"), Authorize(Policy = "Admin")]
     public async Task<IActionResult> CreateAuthor([FromBody] AuthorForCreationDto author)
     {
-        await _authorService.CreateAuthorAsync(author);
+        await _createAuthorUseCase.ExecuteAsync(author);
         return Ok();
     }
 
     [HttpDelete("delete/{id}"), Authorize(Policy = "Admin")]
     public async Task<IActionResult> DeleteAuthor(int id)
     {
-        await _authorService.DeleteAuthorAsync(id);
+        await _deleteAuthorUseCase.ExecuteAsync(id);
         return NoContent();
     }
 
     [HttpGet("edit/{id}", Name = "EditAuthor")]
     public async Task<IActionResult> EditAuthor(int id)
     {
-        var authorDto = await _authorService.GetAuthorByIdAsync(id);
+        var authorDto = await _getAuthorByIdUseCase.ExecuteAsync(id);
         return View("~/Views/Authors/EditAuthorPage.cshtml", authorDto);
     }
 
     [HttpPut("{id}", Name = "UpdateAuthor"), Authorize(Policy = "Admin")]
     public async Task<IActionResult> UpdateAuthor(int id, [FromBody] AuthorForUpdateDto authorDto)
     {
-        await _authorService.UpdateAuthorAsync(id, authorDto);
+        await _updateAuthorUseCase.ExecuteAsync(id, authorDto);
         return NoContent();
     }
 }

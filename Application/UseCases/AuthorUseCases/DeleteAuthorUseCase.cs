@@ -19,7 +19,6 @@ public class DeleteAuthorUseCase : IDeleteAuthorUseCase
         var author = await _repository.Author.GetAuthorAsync(id, trackChanges: false);
         if (author == null)
         {
-            _logger.LogInfo($"Author with id: {id} doesn't exist in the database.");
             throw new NotFoundException($"Author with id {id} not found.");
         }
         _repository.Author.Delete(author);

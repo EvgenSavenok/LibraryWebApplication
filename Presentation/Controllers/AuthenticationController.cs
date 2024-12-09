@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-using Application.Contracts;
-using Application.Contracts.ServicesContracts;
+﻿using Application.Contracts.UseCasesContracts.AuthUseCasesContracts;
 using Application.DataTransferObjects;
 using Domain.Entities.AuthDto;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +9,18 @@ namespace Presentation.Controllers;
 [ApiController]
 public class AuthenticationController : Controller
 {
-    private readonly IAuthService _authService;
+    private readonly IRegisterUserUseCase _registerUserUseCase;
+    private readonly IAuthenticateUserUseCase _authenticateUserUseCase;
+    private readonly IRefreshTokenUseCase _refreshTokenUseCase;
 
-    public AuthenticationController(IAuthService authService)
+    public AuthenticationController(
+        IRegisterUserUseCase registerUserUseCase,
+        IAuthenticateUserUseCase authenticateUserUseCase,
+        IRefreshTokenUseCase refreshTokenUseCase)
     {
-        _authService = authService;
+        _registerUserUseCase = registerUserUseCase;
+        _authenticateUserUseCase = authenticateUserUseCase;
+        _refreshTokenUseCase = refreshTokenUseCase;
     }
 
     [HttpGet("registerPage")]
@@ -33,7 +38,7 @@ public class AuthenticationController : Controller
     [HttpPost("register")]
     public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistration)
     {
-        var result = await _authService.RegisterUserAsync(userForRegistration);
+        var result = await _registerUserUseCase.ExecuteAsync(userForRegistration);
         return result.Succeeded 
             ? StatusCode(201) 
             : BadRequest(result.Errors);
@@ -42,7 +47,7 @@ public class AuthenticationController : Controller
     [HttpPost("login")]
     public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto userForLogin)
     {
-        var (accessToken, refreshToken) = await _authService.AuthenticateUserAsync(userForLogin);
+        var (accessToken, refreshToken) = await _authenticateUserUseCase.ExecuteAsync(userForLogin);
         return Ok(new { AccessToken = accessToken, RefreshToken = refreshToken });
     }
 }

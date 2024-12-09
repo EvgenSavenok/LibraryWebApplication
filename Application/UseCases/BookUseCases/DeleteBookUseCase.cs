@@ -19,7 +19,6 @@ public class DeleteBookUseCase : IDeleteBookUseCase
         var book = await _repository.Book.GetBookAsync(bookId, trackChanges: false);
         if (book == null)
         {
-            _logger.LogInfo($"Book with id: {bookId} doesn't exist in the database.");
             throw new NotFoundException($"Book with id {bookId} not found.");
         }
         _repository.Book.Delete(book);

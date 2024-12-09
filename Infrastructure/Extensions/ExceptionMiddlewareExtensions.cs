@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Application.Contracts;
 using Application.Validation;
+using Application.Validation.CustomExceptions;
 using Domain.Entities.ErrorModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -31,9 +32,17 @@ public static class ExceptionMiddlewareExtensions
                             statusCode = (int)HttpStatusCode.NotFound;
                             message = notFoundException.Message;
                             break;
-                        case ConflictException conflictException:
+                        case AlreadyExistsException conflictException:
                             statusCode = (int)HttpStatusCode.Conflict;
                             message = conflictException.Message;
+                            break;
+                        case UnauthorizedException unauthorizedException:
+                            statusCode = (int)HttpStatusCode.Unauthorized;
+                            message = unauthorizedException.Message;
+                            break;
+                        case BadRequestException badRequestException:
+                            statusCode = (int)HttpStatusCode.BadRequest;
+                            message = badRequestException.Message;
                             break;
                         default:
                             statusCode = (int)HttpStatusCode.InternalServerError;
@@ -41,7 +50,7 @@ public static class ExceptionMiddlewareExtensions
                             break;
                     }
 
-                    logger.LogError($"Something went wrong: {exception}");
+                    logger.LogError($"Status Code: {statusCode}, Message: {message}, Exception: {exception}");
 
                     context.Response.StatusCode = statusCode;
                     await context.Response.WriteAsync(new ErrorDetails
