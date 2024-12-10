@@ -39,9 +39,7 @@ public class AuthenticationController : Controller
     public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistration)
     {
         var result = await _registerUserUseCase.ExecuteAsync(userForRegistration);
-        return result.Succeeded 
-            ? StatusCode(201) 
-            : BadRequest(result.Errors);
+        return Ok(result);
     }
     
     [HttpPost("login")]

@@ -19,6 +19,8 @@ public class BooksController : Controller
     private readonly IUpdateBookUseCase _updateBookUseCase;
     private readonly IDeleteBookUseCase _deleteBookUseCase;
     private readonly IGetAllAuthorsUseCase _getAllAuthorsUseCase;
+    private readonly IEditBookWithAuthorsUseCase _editBookWithAuthorsUseCase;
+    private readonly IAddBookControllerUseCase _addBookControllerUseCase;
 
     public BooksController(
         IGetBooksUseCase getBooksUseCase,
@@ -26,8 +28,9 @@ public class BooksController : Controller
         ICreateBookUseCase createBookUseCase,
         IUpdateBookUseCase updateBookUseCase,
         IDeleteBookUseCase deleteBookUseCase,
-        ICountBooksUseCase countBooksUseCase,
-        IGetAllAuthorsUseCase getAllAuthorsUseCase)
+        IGetAllAuthorsUseCase getAllAuthorsUseCase,
+        IEditBookWithAuthorsUseCase IEditBookWithAuthorsUseCase,
+        IAddBookControllerUseCase addBookControllerUseCase)
     {
         _getBooksUseCase = getBooksUseCase;
         _getBookByIdUseCase = getBookByIdUseCase;
@@ -35,6 +38,8 @@ public class BooksController : Controller
         _updateBookUseCase = updateBookUseCase;
         _deleteBookUseCase = deleteBookUseCase;
         _getAllAuthorsUseCase = getAllAuthorsUseCase;
+        _editBookWithAuthorsUseCase = IEditBookWithAuthorsUseCase;
+        _addBookControllerUseCase = addBookControllerUseCase;
     }
     
     [HttpGet("admin")]
@@ -48,13 +53,7 @@ public class BooksController : Controller
     public async Task<IActionResult> GetBooks([FromQuery] BookParameters requestParameters)
     {
         var pagedResult = await _getBooksUseCase.ExecuteAsync(requestParameters);    
-        return Ok(new
-        {
-            books = pagedResult.Items,
-            currentPage = pagedResult.CurrentPage,
-            totalPages = pagedResult.TotalPages,
-            totalBooks = pagedResult.TotalCount
-        });
+        return Ok(pagedResult);
     }
 
     [HttpGet("{id}", Name = "BookById"), Authorize(Policy = "Admin")]
@@ -67,17 +66,9 @@ public class BooksController : Controller
     [HttpGet("AddBook")]
     public async Task<IActionResult> CreateBook()
     {
-        var genres = Enum.GetValues(typeof(BookGenre)).Cast<BookGenre>()
-            .Select(g => new SelectListItem
-            {
-                Text = g.ToString(),
-                Value = g.ToString(),
-                Selected = g == BookGenre.Adventures 
-            }).ToList();
-
-        var authorsResult = await _getAllAuthorsUseCase.ExecuteAsync(new AuthorParameters() { PageSize = 10});   
-        ViewBag.Genres = genres; 
-        ViewBag.Authors = authorsResult.Items; 
+        var authorsResult = await _addBookControllerUseCase.ExecuteAsync(new AuthorParameters() { PageSize = 10});   
+        ViewBag.Genres = authorsResult.Genres; 
+        ViewBag.Authors = authorsResult.Authors; 
         return View("~/Views/Books/AddBookPage.cshtml");
     }
 
@@ -91,19 +82,10 @@ public class BooksController : Controller
     [HttpGet("edit/{id}", Name = "EditBook")]
     public async Task<IActionResult> EditBook(int id)
     {
-        var bookDto = await _getBookByIdUseCase.ExecuteAsync(id);
-        var genres = Enum.GetValues(typeof(BookGenre)).Cast<BookGenre>()
-            .Select(g => new SelectListItem
-            {
-                Text = g.ToString(),
-                Value = g.ToString(),
-                Selected = g == bookDto.Genre
-            }).ToList();
-    
-        var authorsResult = await _getAllAuthorsUseCase.ExecuteAsync(new AuthorParameters() { PageSize = 10 });
-        ViewBag.Genres = genres; 
-        ViewBag.Authors = authorsResult.Items; 
-        return View("~/Views/Books/EditBookPage.cshtml", bookDto);
+        var pageData = await _editBookWithAuthorsUseCase.ExecuteAsync(id);
+        ViewBag.Genres = pageData.Genres;
+        ViewBag.Authors = pageData.Authors;
+        return View("~/Views/Books/EditBookPage.cshtml", pageData.Book);
     }
 
     [HttpPut("{id}", Name = "UpdateBook"), Authorize(Policy = "Admin")]

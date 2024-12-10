@@ -18,10 +18,10 @@
     <div>
         <label>Genre</label>
         <select name="AuthorId">
-            @foreach (var author in ViewBag.Authors as IEnumerable<AuthorDto>)
+            @foreach (var genre in ViewBag.Genres)
             {
-                <option value="@author.Id" @(ViewBag.DefaultAuthorId != null && ViewBag.DefaultAuthorId == author.Id ? "selected" : "")>
-                    @author.Name @author.LastName
+                <option value="@genre.Value" @(genre.Selected ? "selected" : "")>
+                    @genre.Text
                 </option>
             }
         </select>

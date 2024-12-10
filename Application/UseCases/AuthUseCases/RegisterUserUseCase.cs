@@ -26,12 +26,12 @@ public class RegisterUserUseCase : IRegisterUserUseCase
     public async Task<IdentityResult> ExecuteAsync(UserForRegistrationDto userForRegistration)
     {
         var user = _mapper.Map<User>(userForRegistration);
-        var result = await _userManager.CreateAsync(user, userForRegistration.Password);
         var existingUser = await _userManager.FindByNameAsync(userForRegistration.UserName);
         if (existingUser != null)
         {
             throw new AlreadyExistsException("User with such username already exists.");
         }
+        var result = await _userManager.CreateAsync(user, userForRegistration.Password);
         if (result.Succeeded)
         {
             var userRoleAsString = userForRegistration.Role.ToString();

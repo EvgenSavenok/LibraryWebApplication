@@ -26,8 +26,7 @@ public class AuthenticateUserUseCase : IAuthenticateUserUseCase
         var user = await _userManager.FindByNameAsync(userForLogin.UserName);
         if (user == null || !await _userManager.CheckPasswordAsync(user, userForLogin.Password))
         {
-            _logger.LogWarn("Invalid login attempt.");
-            return (null, null);
+            throw new UnauthorizedException("Cannot login");
         }
         await _authManager.ValidateUser(userForLogin);
         var tokenDto = await _authManager.CreateTokens(user, populateExp: true);

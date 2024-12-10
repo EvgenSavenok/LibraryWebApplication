@@ -63,7 +63,7 @@ public class RefreshTokenUseCase : IRefreshTokenUseCase
         if (user is null || user.RefreshToken != tokenDto.RefreshToken ||
             user.RefreshTokenExpireTime <= DateTime.UtcNow)
         {
-            throw new UnauthorizedException("Invalid refresh token or token expired.");
+            throw new UnauthorizedException("Invalid refresh token or this token expired.");
         }
         return await _authManager.CreateAccessToken(user);
     }

@@ -81,7 +81,7 @@
                 });              
                 if (response.ok) {  
                     const result = await response.json();
-                    displayBooks(result.books);
+                    displayBooks(result.items);
                     displayPagination(result.currentPage, result.totalPages);
                 } else {
                     document.getElementById('booksTableBody').innerHTML = "<tr><td colspan='7'>Failed to load books. Please login again.</td></tr>";
@@ -176,7 +176,7 @@
                 
                 if (response.ok) {
                     const result = await response.json();
-                    const authors = result.authors;
+                    const authors = result.items;
                     const authorSelect = document.getElementById('authorFilter');
 
                     authorSelect.innerHTML = '<option value="">All authors</option>';

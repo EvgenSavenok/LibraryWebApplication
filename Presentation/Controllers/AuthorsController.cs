@@ -40,13 +40,7 @@ public class AuthorsController : Controller
     public async Task<IActionResult> GetAuthors([FromQuery] AuthorParameters requestParameters)
     {
         var pagedResult = await _getAllAuthorsUseCase.ExecuteAsync(requestParameters);
-        return Ok(new
-        {
-            authors = pagedResult.Items,
-            currentPage = pagedResult.CurrentPage,
-            totalPages = pagedResult.TotalPages,
-            totalBooks = pagedResult.TotalCount
-        });
+        return Ok(pagedResult);
     }
 
     [HttpGet("AddAuthor")]

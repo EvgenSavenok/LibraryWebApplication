@@ -90,10 +90,11 @@
                         'Authorization': `Bearer ${token}`, 
                         'Content-Type': 'application/json'
                     }
-                });        
+                });   
+                console.log(response);
                 if (response.ok) {  
-                    const result = await response.json();           
-                    displayBooks(result.books);                   
+                    const result = await response.json(); 
+                    displayBooks(result.items);                   
                     displayPagination(result.currentPage, result.totalPages);
                 } else {
                     document.getElementById('booksTableBody').innerHTML = "<tr><td colspan='7'>Failed to load books. Please log again.</td></tr>";
@@ -207,7 +208,7 @@
                 
                 if (response.ok) {
                     const result = await response.json();
-                    const authors = result.authors;
+                    const authors = result.items;
                     
                     const authorSelect = document.getElementById('authorFilter');
 

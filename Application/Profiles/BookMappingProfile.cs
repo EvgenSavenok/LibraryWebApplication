@@ -28,5 +28,15 @@ public class BookMappingProfile : Profile
             .ForMember(dest => dest.ISBN, opt => opt.MapFrom(src => src.ISBN))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
             .ForMember(dest => dest.AuthorId, opt => opt.MapFrom(src => src.AuthorId));
+        
+        CreateMap<BookDto, BookForUpdateDto>()
+            .ForMember(dest => dest.ISBN, opt => opt.MapFrom(src => src.ISBN))
+            .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.BookTitle))
+            .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.AuthorId, opt => opt.MapFrom(src => src.AuthorId))
+            .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.AuthorName))
+            .ForMember(dest => dest.AuthorLastName, opt => opt.MapFrom(src => src.AuthorLastName))
+            .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount));
     }
 }

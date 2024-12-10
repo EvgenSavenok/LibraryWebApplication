@@ -4,5 +4,5 @@ namespace Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
 
 public interface ICreateBorrowUseCase
 {
-    public Task ExecuteAsync(UserBookBorrowDto borrowDto);
+    public Task ExecuteAsync(string userId, int bookId, BookDto bookDto);
 }

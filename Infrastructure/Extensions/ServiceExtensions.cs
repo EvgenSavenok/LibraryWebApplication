@@ -99,6 +99,8 @@ public static class ServiceExtensions
         services.AddScoped<IUpdateBookUseCase, UpdateBookUseCase>();
         services.AddScoped<IDeleteBookUseCase, DeleteBookUseCase>();
         services.AddScoped<ICountBooksUseCase, CountBooksUseCase>();
+        services.AddScoped<IEditBookWithAuthorsUseCase, EditBookWithAuthorsUseCase>();
+        services.AddScoped<IAddBookControllerUseCase, AddBookControllerUseCase>();
 
         //Authors management use cases
         services.AddScoped<ICountAuthorsUseCase, CountAuthorsUseCase>();
