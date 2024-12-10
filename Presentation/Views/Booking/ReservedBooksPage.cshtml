@@ -45,7 +45,7 @@
                 });
                 if (response.ok) {
                     const result = await response.json();
-                    displayReservedBooks(result.reservedBooks);
+                    displayReservedBooks(result.items);
                     displayPagination(result.currentPage, result.totalPages);
                 } else {
                     document.getElementById('reservedBooksTableBody').innerHTML = "<tr><td colspan='5'>Failed to load reserved books. Please try again.</td></tr>";

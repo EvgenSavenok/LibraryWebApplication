@@ -6,6 +6,5 @@ namespace Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
 
 public interface IGetUsersBorowsUseCase
 {
-    public Task<PagedResult<UserBookBorrow>> ExecuteAsync(BorrowParameters borrowParameters,
-        string userId);
+    public Task<PagedResult<UserBookBorrow>> ExecuteAsync(BorrowParameters borrowParameters);
 }

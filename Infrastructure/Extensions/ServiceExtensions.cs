@@ -99,7 +99,7 @@ public static class ServiceExtensions
         services.AddScoped<IUpdateBookUseCase, UpdateBookUseCase>();
         services.AddScoped<IDeleteBookUseCase, DeleteBookUseCase>();
         services.AddScoped<ICountBooksUseCase, CountBooksUseCase>();
-        services.AddScoped<IEditBookWithAuthorsUseCase, EditBookWithAuthorsUseCase>();
+        services.AddScoped<IEditBookControllerUseCase, EditBookControllerUseCase>();
         services.AddScoped<IAddBookControllerUseCase, AddBookControllerUseCase>();
 
         //Authors management use cases
@@ -115,6 +115,8 @@ public static class ServiceExtensions
         services.AddScoped<ICreateBorrowUseCase, CreateBorrowUseCase>();
         services.AddScoped<IGetUserBorrowUseCase, GetUserBorrowUseCase>();
         services.AddScoped<IGetUsersBorowsUseCase, GetUsersBorowsUseCase>();
+        services.AddScoped<IBookInfoControllerUseCase, BookInfoControllerUseCase>();
+        services.AddScoped<ITakeBookControllerUseCase, TakeBookControllerUseCase>();
         
         //Validation use cases
         services.AddValidatorsFromAssemblyContaining<BookValidator>();
@@ -157,7 +159,7 @@ public static class ServiceExtensions
     
     public static void ConfigureLoggerService(this IServiceCollection services) =>
         services.AddSingleton<ILoggerManager, LoggerManager>();
-
+    
     public static void AddAuthorizationPolicy(this IServiceCollection services) =>
         services.AddAuthorization(options =>
         {

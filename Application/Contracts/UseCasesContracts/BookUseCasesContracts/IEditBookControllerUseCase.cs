@@ -2,7 +2,7 @@
 
 namespace Application.Contracts.UseCasesContracts.BookUseCasesContracts;
 
-public interface IEditBookWithAuthorsUseCase
+public interface IEditBookControllerUseCase
 {
-    Task<AddBookPageDataDto> ExecuteAsync(int bookId);
+    Task<PageDataDto> ExecuteAsync(int bookId);
 }

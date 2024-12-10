@@ -19,7 +19,7 @@ public class BooksController : Controller
     private readonly IUpdateBookUseCase _updateBookUseCase;
     private readonly IDeleteBookUseCase _deleteBookUseCase;
     private readonly IGetAllAuthorsUseCase _getAllAuthorsUseCase;
-    private readonly IEditBookWithAuthorsUseCase _editBookWithAuthorsUseCase;
+    private readonly IEditBookControllerUseCase _iEditBookControllerUseCase;
     private readonly IAddBookControllerUseCase _addBookControllerUseCase;
 
     public BooksController(
@@ -29,7 +29,7 @@ public class BooksController : Controller
         IUpdateBookUseCase updateBookUseCase,
         IDeleteBookUseCase deleteBookUseCase,
         IGetAllAuthorsUseCase getAllAuthorsUseCase,
-        IEditBookWithAuthorsUseCase IEditBookWithAuthorsUseCase,
+        IEditBookControllerUseCase iIEditBookControllerUseCase,
         IAddBookControllerUseCase addBookControllerUseCase)
     {
         _getBooksUseCase = getBooksUseCase;
@@ -38,7 +38,7 @@ public class BooksController : Controller
         _updateBookUseCase = updateBookUseCase;
         _deleteBookUseCase = deleteBookUseCase;
         _getAllAuthorsUseCase = getAllAuthorsUseCase;
-        _editBookWithAuthorsUseCase = IEditBookWithAuthorsUseCase;
+        _iEditBookControllerUseCase = iIEditBookControllerUseCase;
         _addBookControllerUseCase = addBookControllerUseCase;
     }
     
@@ -82,7 +82,7 @@ public class BooksController : Controller
     [HttpGet("edit/{id}", Name = "EditBook")]
     public async Task<IActionResult> EditBook(int id)
     {
-        var pageData = await _editBookWithAuthorsUseCase.ExecuteAsync(id);
+        var pageData = await _iEditBookControllerUseCase.ExecuteAsync(id);
         ViewBag.Genres = pageData.Genres;
         ViewBag.Authors = pageData.Authors;
         return View("~/Views/Books/EditBookPage.cshtml", pageData.Book);

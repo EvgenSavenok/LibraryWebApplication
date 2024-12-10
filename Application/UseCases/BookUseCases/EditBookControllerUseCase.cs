@@ -6,18 +6,18 @@ using Domain.Entities.RequestFeatures;
 
 namespace Application.UseCases.BookUseCases;
 
-public class EditBookWithAuthorsUseCase : IEditBookWithAuthorsUseCase
+public class EditBookControllerUseCase : IEditBookControllerUseCase
 {
     private readonly IGetAllAuthorsUseCase _getAllAuthorsUseCase;
     private readonly IGetBookByIdUseCase _getBookByIdUseCase;
 
-    public EditBookWithAuthorsUseCase(IGetAllAuthorsUseCase getAllAuthorsUseCase,
+    public EditBookControllerUseCase(IGetAllAuthorsUseCase getAllAuthorsUseCase,
         IGetBookByIdUseCase getBookByIdUseCase)
     {
         _getAllAuthorsUseCase = getAllAuthorsUseCase;
         _getBookByIdUseCase = getBookByIdUseCase;
     }
-    public async Task<AddBookPageDataDto> ExecuteAsync(int bookId)
+    public async Task<PageDataDto> ExecuteAsync(int bookId)
     {
         var bookDto = await _getBookByIdUseCase.ExecuteAsync(bookId);
         BookGenre defaultGenre = BookGenre.Adventures;
@@ -32,7 +32,7 @@ public class EditBookWithAuthorsUseCase : IEditBookWithAuthorsUseCase
 
         var authorsResult = await _getAllAuthorsUseCase.ExecuteAsync(new AuthorParameters { PageSize = 10 });
 
-        return new AddBookPageDataDto
+        return new PageDataDto
         {
             Genres = genres,
             Authors = authorsResult.Items,

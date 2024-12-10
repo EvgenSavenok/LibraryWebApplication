@@ -1,29 +1,28 @@
-﻿using Application.Contracts;
+﻿using System.Security.Claims;
+using Application.Contracts;
 using Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
 using Application.DataTransferObjects;
-using Application.Validation;
 using AutoMapper;
 using Domain.Entities.Models;
 using Domain.Entities.RequestFeatures;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.UseCases.BorrowingUseCases;
 
 public class GetUsersBorowsUseCase : IGetUsersBorowsUseCase
 {
     private readonly IRepositoryManager _repository;
-    private readonly ILoggerManager _logger;
-    private readonly IMapper _mapper;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public GetUsersBorowsUseCase(IRepositoryManager repository,
-        ILoggerManager logger,
-        IMapper mapper)
+        IHttpContextAccessor httpContextAccessor)
     {
         _repository = repository;
-        _logger = logger;
-        _mapper = mapper;
+        _httpContextAccessor = httpContextAccessor;
     }
-    public async Task<PagedResult<UserBookBorrow>> ExecuteAsync(BorrowParameters borrowParameters, string userId)
+    public async Task<PagedResult<UserBookBorrow>> ExecuteAsync(BorrowParameters borrowParameters)
     {
+        var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         var borrowsAsync = await _repository.Borrow.GetAllUserBookBorrowsAsync(borrowParameters, userId, trackChanges: false);
         if (borrowsAsync == null || !borrowsAsync.Any())
         {

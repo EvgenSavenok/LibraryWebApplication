@@ -1,8 +1,4 @@
-﻿using System.Security.Claims;
-using Application.Contracts.UseCasesContracts.AuthorUseCasesContracts;
-using Application.Contracts.UseCasesContracts.BookUseCasesContracts;
-using Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
-using Application.DataTransferObjects;
+﻿using Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
 using Domain.Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,23 +9,17 @@ namespace Presentation.Controllers;
 [ApiController]
 public class BookingController : Controller
 {
-    private readonly IGetBookByIdUseCase _getBookByIdUseCase;
-    private readonly IUpdateBookUseCase _updateBookUseCase;
-    private readonly ICreateBorrowUseCase _createBorrowUseCase;
     private readonly IGetUsersBorowsUseCase _getUsersBorowsUseCase;
-    private readonly IGetAuthorByIdUseCase _getAuthorByIdUseCase;
+    private readonly IBookInfoControllerUseCase _bookInfoControllerUseCase;
+    private readonly ITakeBookControllerUseCase _takeBookControllerUseCase;
     
-    public BookingController(IGetBookByIdUseCase getBookByIdUseCase,
-        IUpdateBookUseCase updateBookUseCase,
-        ICreateBorrowUseCase createBorrowUseCase,
-        IGetUsersBorowsUseCase getUsersBorowsUseCase,
-        IGetAuthorByIdUseCase getAuthorByIdUseCase)
+    public BookingController(IGetUsersBorowsUseCase getUsersBorowsUseCase,
+        IBookInfoControllerUseCase bookInfoControllerUseCase,
+        ITakeBookControllerUseCase takeBookControllerUseCase)
     {
-        _getBookByIdUseCase = getBookByIdUseCase;
-        _updateBookUseCase = updateBookUseCase;
-        _createBorrowUseCase = createBorrowUseCase;
         _getUsersBorowsUseCase = getUsersBorowsUseCase;
-        _getAuthorByIdUseCase = getAuthorByIdUseCase;
+        _bookInfoControllerUseCase = bookInfoControllerUseCase;
+        _takeBookControllerUseCase = takeBookControllerUseCase;
     }
 
     [HttpGet("user")]
@@ -38,19 +28,11 @@ public class BookingController : Controller
         return View("~/Views/Booking/AllBooksPage.cshtml");
     }
 
-    [HttpGet("bookInfo/{id}")]
-    public async Task<IActionResult> BookInfo(int id)
+    [HttpGet("bookInfo/{bookId}")]
+    public async Task<IActionResult> BookInfo(int bookId)
     {
-        var bookInfo = await _getBookByIdUseCase.ExecuteAsync(id);
-        var authorInfo = await _getAuthorByIdUseCase.ExecuteAsync(id);
-        
-        var bookInfoViewModel = new
-        {
-             Book = bookInfo, 
-             Author = authorInfo 
-        };
-        
-        return View("~/Views/Booking/InfoAboutBook.cshtml", bookInfoViewModel);
+        var pageDataDto = await _bookInfoControllerUseCase.GetBookInfo(bookId);
+        return View("~/Views/Booking/InfoAboutBook.cshtml", pageDataDto);
     }
 
     [HttpGet("user/reservedBooksPage")]
@@ -62,9 +44,7 @@ public class BookingController : Controller
     [HttpGet("user/reservedBooks")]
     public async Task<IActionResult> DisplayUserReservedBooks([FromQuery] BorrowParameters requestParameters)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        var pagedResult = await _getUsersBorowsUseCase.ExecuteAsync(requestParameters, userId);
+        var pagedResult = await _getUsersBorowsUseCase.ExecuteAsync(requestParameters);
 
         if (pagedResult == null)
         {
@@ -77,9 +57,7 @@ public class BookingController : Controller
     [HttpPost("take/{bookId}"), Authorize(Policy = "User")]
     public async Task<IActionResult> TakeBook(int bookId)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var book = await _getBookByIdUseCase.ExecuteAsync(bookId);
-        await _createBorrowUseCase.ExecuteAsync(userId, bookId, book);
+        await _takeBookControllerUseCase.ExecuteAsync(bookId);
         return Ok();
     }
 }

@@ -18,6 +18,7 @@ builder.Services.AddAuthorizationPolicy();
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureJwt(builder.Configuration);
 builder.Services.AddUseCases();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthenticationManager, AuthenticationManager>();
 
 builder.Services.ConfigureSwagger();
