@@ -44,14 +44,8 @@ public class BookingController : Controller
     [HttpGet("user/reservedBooks")]
     public async Task<IActionResult> DisplayUserReservedBooks([FromQuery] BorrowParameters requestParameters)
     {
-        var pagedResult = await _getUsersBorowsUseCase.ExecuteAsync(requestParameters);
-
-        if (pagedResult == null)
-        {
-            return View("~/Views/Booking/NoReservedBooksPage.cshtml"); 
-        }
-        
-        return Ok(pagedResult);
+        var result = await _getUsersBorowsUseCase.ExecuteAsync(requestParameters);
+        return result; 
     }
 
     [HttpPost("take/{bookId}"), Authorize(Policy = "User")]
