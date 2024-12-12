@@ -19,7 +19,7 @@ public class BookInfoControllerUseCase : IBookInfoControllerUseCase
     public async Task<PageDataDto> GetBookInfo(int bookId)
     {
         var bookInfo = await _getBookByIdUseCase.ExecuteAsync(bookId);
-        var authorInfo = await _getAuthorByIdUseCase.ExecuteAsync(bookId);
+        var authorInfo = await _getAuthorByIdUseCase.ExecuteAsync(bookInfo.AuthorId);
         
         return new PageDataDto
         {

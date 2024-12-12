@@ -23,6 +23,7 @@ public class GetAuthorByIdUseCase : IGetAuthorByIdUseCase
     
     public async Task<AuthorDto> ExecuteAsync(int id)
     {
+        
         var author = await _repository.Author.GetAuthorAsync(id, trackChanges: false);
         if (author == null)
         {

@@ -117,6 +117,7 @@ public static class ServiceExtensions
         services.AddScoped<IGetUsersBorowsUseCase, GetUsersBorowsUseCase>();
         services.AddScoped<IBookInfoControllerUseCase, BookInfoControllerUseCase>();
         services.AddScoped<ITakeBookControllerUseCase, TakeBookControllerUseCase>();
+        services.AddScoped<IReturnBookUseCase, ReturnBookUseCase>();
         
         //Validation use cases
         services.AddValidatorsFromAssemblyContaining<BookValidator>();

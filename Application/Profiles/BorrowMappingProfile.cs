@@ -13,6 +13,7 @@ public class BorrowMappingProfile : Profile
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
             .ForMember(dest => dest.BookId, opt => opt.MapFrom(src => src.BookId))
             .ForMember(dest => dest.BorrowDate, opt => opt.MapFrom(src => src.BorrowDate))
-            .ForMember(dest => dest.ReturnDate, opt => opt.MapFrom(src => src.ReturnDate));
+            .ForMember(dest => dest.ReturnDate, opt => opt.MapFrom(src => src.ReturnDate))
+            .ReverseMap();
     }
 }

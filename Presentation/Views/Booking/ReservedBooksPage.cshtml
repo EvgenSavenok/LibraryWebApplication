@@ -17,6 +17,7 @@
                 <th>Author</th>
                 <th>Reserved on</th>
                 <th>Return by</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody id="reservedBooksTableBody"></tbody>
@@ -54,7 +55,34 @@
                 document.getElementById('reservedBooksTableBody').innerHTML = "<tr><td colspan='5'>Error loading reserved books. Please try again later.</td></tr>";
             }
         }
-    
+
+        async function returnBook(bookId) {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                window.location.href = "/api/authentication/loginPage";
+                return;
+            }
+            try {
+                const url = `/api/booking/delete/${bookId}`;
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    alert('Book returned successfully!');
+                    await loadReservedBooks(currentPage); 
+                } else {
+                    alert('Failed to return the book. Please try again.');
+                }
+            } catch (error) {
+                alert('Error returning the book. Please try again later.');
+            }
+        }
+
         function displayReservedBooks(books) {
             const booksList = document.getElementById('reservedBooksTableBody');
             booksList.innerHTML = '';
@@ -66,8 +94,7 @@
                     <td>${book.book.author.name} ${book.book.author.lastName}</td>
                     <td>${new Date(book.borrowDate).toLocaleDateString()}</td>
                     <td>${new Date(book.returnDate).toLocaleDateString()}</td>
-                `;
-    
+                    <td><button class="btn btn-danger" onclick="returnBook(${book.bookId})">Return</button></td>`;
                 booksList.appendChild(bookRow);
             });
         }

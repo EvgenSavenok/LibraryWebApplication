@@ -12,14 +12,17 @@ public class BookingController : Controller
     private readonly IGetUsersBorowsUseCase _getUsersBorowsUseCase;
     private readonly IBookInfoControllerUseCase _bookInfoControllerUseCase;
     private readonly ITakeBookControllerUseCase _takeBookControllerUseCase;
+    private readonly IReturnBookUseCase _returnBookUseCase;
     
     public BookingController(IGetUsersBorowsUseCase getUsersBorowsUseCase,
         IBookInfoControllerUseCase bookInfoControllerUseCase,
-        ITakeBookControllerUseCase takeBookControllerUseCase)
+        ITakeBookControllerUseCase takeBookControllerUseCase,
+        IReturnBookUseCase returnBookUseCase)
     {
         _getUsersBorowsUseCase = getUsersBorowsUseCase;
         _bookInfoControllerUseCase = bookInfoControllerUseCase;
         _takeBookControllerUseCase = takeBookControllerUseCase;
+        _returnBookUseCase = returnBookUseCase;
     }
 
     [HttpGet("user")]
@@ -52,6 +55,13 @@ public class BookingController : Controller
     public async Task<IActionResult> TakeBook(int bookId)
     {
         await _takeBookControllerUseCase.ExecuteAsync(bookId);
+        return Ok();
+    }
+    
+    [HttpDelete("delete/{bookId}"), Authorize(Policy = "User")]
+    public async Task<IActionResult> ReturnBook(int bookId)
+    {
+        await _returnBookUseCase.ExecuteAsync(bookId);
         return Ok();
     }
 }

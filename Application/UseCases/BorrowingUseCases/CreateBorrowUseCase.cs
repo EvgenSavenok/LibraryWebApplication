@@ -2,6 +2,7 @@
 using Application.Contracts.UseCasesContracts.BookUseCasesContracts;
 using Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
 using Application.DataTransferObjects;
+using Application.Validation.CustomExceptions;
 using AutoMapper;
 using Domain.Entities.Models;
 using FluentValidation;
@@ -14,16 +15,19 @@ public class CreateBorrowUseCase : ICreateBorrowUseCase
     private readonly IMapper _mapper;
     private readonly IValidator<UserBookBorrow> _validator;
     private readonly IUpdateBookUseCase _updateBookUseCase;
+    private readonly IGetUserBorrowUseCase _getUserBorrowUseCase;
 
     public CreateBorrowUseCase(IRepositoryManager repository,
         IMapper mapper,
         IValidator<UserBookBorrow> validator,
-        IUpdateBookUseCase updateBookUseCase)
+        IUpdateBookUseCase updateBookUseCase,
+        IGetUserBorrowUseCase getUserBorrowUseCase)
     {
         _repository = repository;
         _mapper = mapper;
         _validator = validator;
         _updateBookUseCase = updateBookUseCase;
+        _getUserBorrowUseCase = getUserBorrowUseCase;   
     }
 
     public async Task ExecuteAsync(string userId, int bookId, BookDto bookDto)
@@ -46,5 +50,9 @@ public class CreateBorrowUseCase : ICreateBorrowUseCase
         }
         _repository.Borrow.Create(borrowEntity);
         await _repository.SaveAsync();
+        if (_getUserBorrowUseCase.ExecuteAsync(bookId) == null)
+        {
+            throw new BadRequestException($"Cannot reserve book with id {bookId}");
+        }
     }
 }

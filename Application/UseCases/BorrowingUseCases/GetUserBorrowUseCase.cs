@@ -27,8 +27,9 @@ public class GetUserBorrowUseCase : IGetUserBorrowUseCase
         var borrow = await _repository.Borrow.GetUserBookBorrowAsync(id, trackChanges: false);
         if (borrow == null)
         {
-            throw new BadRequestException("Cannot count number of borrows.");
+            throw new BadRequestException("Cannot get borrow.");
         }
-        return _mapper.Map<UserBookBorrowDto>(borrow);
+        var bookDto = _mapper.Map<UserBookBorrowDto>(borrow);
+        return bookDto;
     }
 }
