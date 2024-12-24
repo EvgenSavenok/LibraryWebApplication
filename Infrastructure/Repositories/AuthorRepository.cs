@@ -1,7 +1,7 @@
-﻿using Domain.Contracts;
-using Domain.Entities.Models;
+﻿using Application.Contracts.RepositoryContracts;
+using Application.Specifications;
 using Domain.Entities.RequestFeatures;
-using Domain.Entities.Specifications;
+using Domain.Models;
 using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Repository;
@@ -28,6 +28,9 @@ public class AuthorRepository : RepositoryBase<Author>, IAuthorRepository
         return await GetBySpecificationAsync(specification, trackChanges);
     }
 
-    public async Task<Author> GetAuthorAsync(int authorId, bool trackChanges) =>
-        await FindByCondition(c => c.Id.Equals(authorId), trackChanges).SingleOrDefaultAsync();
+    public async Task<Author> GetAuthorAsync(int authorId, bool trackChanges)
+    {
+        var authors = await FindByCondition(c => c.Id.Equals(authorId), trackChanges);
+        return authors.SingleOrDefault();
+    }
 }

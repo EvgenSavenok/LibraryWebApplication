@@ -4,8 +4,7 @@ using Application.DataTransferObjects;
 using Application.Validation;
 using Application.Validation.CustomExceptions;
 using AutoMapper;
-using Domain.Entities.AuthDto;
-using Domain.Entities.Models;
+using Domain.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Application.UseCases.AuthUseCases;

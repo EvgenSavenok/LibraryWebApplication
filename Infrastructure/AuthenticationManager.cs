@@ -2,9 +2,9 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Domain.Contracts;
-using Domain.Entities.AuthDto;
-using Domain.Entities.Models;
+using Application.Contracts;
+using Application.DataTransferObjects;
+using Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

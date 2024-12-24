@@ -1,5 +1,5 @@
 ﻿using Application.DataTransferObjects;
-using Domain.Entities.Models;
+using Application.RequestFeatures;
 using Domain.Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 

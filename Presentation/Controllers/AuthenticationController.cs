@@ -1,6 +1,5 @@
 ﻿using Application.Contracts.UseCasesContracts.AuthUseCasesContracts;
 using Application.DataTransferObjects;
-using Domain.Entities.AuthDto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;

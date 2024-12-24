@@ -1,10 +1,12 @@
 ﻿using System.Security.Claims;
 using Application.Contracts;
+using Application.Contracts.RepositoryContracts;
 using Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
 using Application.DataTransferObjects;
+using Application.RequestFeatures;
 using AutoMapper;
-using Domain.Entities.Models;
 using Domain.Entities.RequestFeatures;
+using Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

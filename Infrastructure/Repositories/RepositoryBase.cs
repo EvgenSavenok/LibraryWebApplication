@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
-using Domain.Contracts;
+using Application.Contracts;
+using Application.Contracts.RepositoryContracts;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 
@@ -12,19 +13,19 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
         RepositoryContext = repositoryContext;
     }
-    public IQueryable<T> FindAll(bool trackChanges) =>
-        !trackChanges ?
+    public async Task<IEnumerable<T>> FindAll(bool trackChanges) =>
+        await (!trackChanges ?
             RepositoryContext.Set<T>()
                 .AsNoTracking() :
-            RepositoryContext.Set<T>();
-    public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression,
+            RepositoryContext.Set<T>()).ToListAsync();
+    public async Task<IEnumerable<T>> FindByCondition(Expression<Func<T, bool>> expression,
         bool trackChanges) =>
-        !trackChanges ?
+        await (!trackChanges ?
             RepositoryContext.Set<T>()
                 .Where(expression)
                 .AsNoTracking() :
             RepositoryContext.Set<T>()
-                .Where(expression);
+                .Where(expression)).ToListAsync();
     public void Create(T entity) => RepositoryContext.Set<T>().Add(entity);
     public void Update(T entity) => RepositoryContext.Set<T>().Update(entity);
     public void Delete(T entity) => RepositoryContext.Set<T>().Remove(entity);
@@ -34,6 +35,9 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
 
         if (specification.Criteria != null)
             query = query.Where(specification.Criteria);
+        
+        if (!trackChanges)
+            query = query.AsNoTracking();
 
         if (specification.OrderBy != null)
             query = specification.OrderBy(query);

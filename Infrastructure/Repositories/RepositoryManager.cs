@@ -1,5 +1,5 @@
 ﻿using Application.Contracts;
-using Domain.Contracts;
+using Application.Contracts.RepositoryContracts;
 using Repository;
 
 namespace Infrastructure.Repositories;

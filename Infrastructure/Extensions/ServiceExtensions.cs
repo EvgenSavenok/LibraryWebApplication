@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Application.Contracts;
+using Application.Contracts.RepositoryContracts;
 using Application.Contracts.UseCasesContracts.AuthorUseCasesContracts;
 using Application.Contracts.UseCasesContracts.AuthUseCasesContracts;
 using Application.Contracts.UseCasesContracts.BookUseCasesContracts;
@@ -9,7 +10,7 @@ using Application.UseCases.AuthUseCases;
 using Application.UseCases.BookUseCases;
 using Application.UseCases.BorrowingUseCases;
 using Application.Validation;
-using Domain.Entities.Models;
+using Domain.Models;
 using FluentValidation;
 using Infrastructure.Logging;
 using Infrastructure.Repositories;

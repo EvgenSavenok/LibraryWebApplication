@@ -1,7 +1,9 @@
-﻿using Domain.Contracts;
-using Domain.Entities.Models;
+﻿using Application.Contracts;
+using Application.Contracts.RepositoryContracts;
+using Application.RequestFeatures;
+using Application.Specifications;
 using Domain.Entities.RequestFeatures;
-using Domain.Entities.Specifications;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 
@@ -14,8 +16,11 @@ public class UserBookBorrowRepository : RepositoryBase<UserBookBorrow>, IUserBoo
     {
     }
 
-    public async Task<UserBookBorrow> GetUserBookBorrowAsync(int id, bool trackChanges) =>
-        await FindByCondition(b => b.BookId == id, trackChanges).SingleOrDefaultAsync();
+    public async Task<UserBookBorrow> GetUserBookBorrowAsync(int id, bool trackChanges)
+    {
+        var borrow = await FindByCondition(b => b.BookId == id, trackChanges);
+        return borrow.SingleOrDefault();
+    }
 
     public async Task<IEnumerable<UserBookBorrow>> GetAllUserBookBorrowsAsync(BorrowParameters borrowParameters, string userId, bool trackChanges)
     {

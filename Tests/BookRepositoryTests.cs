@@ -1,4 +1,4 @@
-﻿using Domain.Entities.Models;
+﻿using Domain.Models;
 using FluentAssertions;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;

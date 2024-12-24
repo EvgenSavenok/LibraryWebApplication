@@ -1,11 +1,9 @@
-﻿using Application.Contracts.UseCasesContracts.AuthorUseCasesContracts;
-using Application.Contracts.UseCasesContracts.BookUseCasesContracts;
+﻿using Application.Contracts.UseCasesContracts.BookUseCasesContracts;
 using Application.DataTransferObjects;
-using Domain.Entities.Models;
+using Application.RequestFeatures;
 using Domain.Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Presentation.Controllers;
 
@@ -18,7 +16,6 @@ public class BooksController : Controller
     private readonly ICreateBookUseCase _createBookUseCase;
     private readonly IUpdateBookUseCase _updateBookUseCase;
     private readonly IDeleteBookUseCase _deleteBookUseCase;
-    private readonly IGetAllAuthorsUseCase _getAllAuthorsUseCase;
     private readonly IEditBookControllerUseCase _iEditBookControllerUseCase;
     private readonly IAddBookControllerUseCase _addBookControllerUseCase;
 
@@ -28,7 +25,6 @@ public class BooksController : Controller
         ICreateBookUseCase createBookUseCase,
         IUpdateBookUseCase updateBookUseCase,
         IDeleteBookUseCase deleteBookUseCase,
-        IGetAllAuthorsUseCase getAllAuthorsUseCase,
         IEditBookControllerUseCase iIEditBookControllerUseCase,
         IAddBookControllerUseCase addBookControllerUseCase)
     {
@@ -37,7 +33,6 @@ public class BooksController : Controller
         _createBookUseCase = createBookUseCase;
         _updateBookUseCase = updateBookUseCase;
         _deleteBookUseCase = deleteBookUseCase;
-        _getAllAuthorsUseCase = getAllAuthorsUseCase;
         _iEditBookControllerUseCase = iIEditBookControllerUseCase;
         _addBookControllerUseCase = addBookControllerUseCase;
     }

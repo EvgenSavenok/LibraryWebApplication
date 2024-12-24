@@ -1,12 +1,13 @@
 ﻿using System.Security.Claims;
 using Application.Contracts;
+using Application.Contracts.RepositoryContracts;
 using Application.Contracts.UseCasesContracts.BookUseCasesContracts;
 using Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
 using Application.DataTransferObjects;
 using Application.Validation;
 using Application.Validation.CustomExceptions;
 using AutoMapper;
-using Domain.Entities.Models;
+using Domain.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.UseCases.BorrowingUseCases;

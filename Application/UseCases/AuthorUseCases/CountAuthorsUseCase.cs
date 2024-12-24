@@ -1,4 +1,5 @@
 ﻿using Application.Contracts;
+using Application.Contracts.RepositoryContracts;
 using Application.Contracts.UseCasesContracts.AuthorUseCasesContracts;
 using Domain.Entities.RequestFeatures;
 

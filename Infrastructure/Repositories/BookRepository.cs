@@ -1,7 +1,8 @@
-﻿using Domain.Contracts;
-using Domain.Entities.Models;
+﻿using Application.Contracts.RepositoryContracts;
+using Application.RequestFeatures;
+using Application.Specifications;
 using Domain.Entities.RequestFeatures;
-using Domain.Entities.Specifications;
+using Domain.Models;
 using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Repository;
@@ -20,17 +21,23 @@ public class BookRepository : RepositoryBase<Book>, IBookRepository
         var specification = new BookSpecification(bookParameters);
         return await GetBySpecificationAsync(specification, trackChanges);
     }
-    
-    public async Task<Book> GetBookAsync(int bookId, bool trackChanges) =>
-        await FindByCondition(c => c.Id.Equals(bookId), trackChanges).SingleOrDefaultAsync();
-    
+
+    public async Task<Book> GetBookAsync(int bookId, bool trackChanges)
+    {
+        var book = await FindByCondition(c => c.Id.Equals(bookId), trackChanges);
+        return book.SingleOrDefault();
+    }
+
     public async Task<int> CountBooksAsync(BookParameters bookParameters)
     {
         var specification = new BookSpecification(bookParameters) { PageNumber = 1, PageSize = int.MaxValue };
         var books = await GetBySpecificationAsync(specification, trackChanges: false);
         return books.Count();
     }
-    
-    public async Task<Book> GetBookByIsbnAsync(string isbn) =>
-        await FindByCondition(b => b.ISBN == isbn, trackChanges: false).SingleOrDefaultAsync();
+
+    public async Task<Book> GetBookByIsbnAsync(string isbn)
+    {
+        var book = await FindByCondition(b => b.ISBN == isbn, trackChanges: false);
+        return book.SingleOrDefault();
+    }
 }

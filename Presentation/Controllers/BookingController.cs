@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
+using Application.RequestFeatures;
 using Domain.Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

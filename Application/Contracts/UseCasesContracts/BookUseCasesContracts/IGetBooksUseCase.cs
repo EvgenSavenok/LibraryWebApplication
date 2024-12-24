@@ -1,4 +1,5 @@
 ﻿using Application.DataTransferObjects;
+using Application.RequestFeatures;
 using Domain.Entities.RequestFeatures;
 
 namespace Application.Contracts.UseCasesContracts.BookUseCasesContracts;

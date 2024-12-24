@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using Application.Contracts;
-using Domain.Contracts;
 using Infrastructure;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc;

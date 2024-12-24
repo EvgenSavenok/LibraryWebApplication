@@ -1,6 +1,6 @@
 ﻿using Application.DataTransferObjects;
 using AutoMapper;
-using Domain.Entities.Models;
+using Domain.Models;
 
 namespace Application.Profiles;
 

@@ -1,8 +1,8 @@
 ﻿using Application.Contracts.UseCasesContracts.AuthorUseCasesContracts;
 using Application.Contracts.UseCasesContracts.BookUseCasesContracts;
 using Application.DataTransferObjects;
-using Domain.Entities.Models;
 using Domain.Entities.RequestFeatures;
+using Domain.Models;
 
 namespace Application.UseCases.BookUseCases;
 

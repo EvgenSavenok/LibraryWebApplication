@@ -1,6 +1,8 @@
 ﻿using Application.Contracts;
+using Application.Contracts.RepositoryContracts;
 using Application.Contracts.UseCasesContracts.BookUseCasesContracts;
 using Application.DataTransferObjects;
+using Application.RequestFeatures;
 using Application.Validation;
 using AutoMapper;
 using Domain.Entities.RequestFeatures;

@@ -1,6 +1,6 @@
 ﻿using Application.DataTransferObjects;
 using AutoMapper;
-using Domain.Entities.Models;
+using Domain.Models;
 
 namespace Application.Profiles;
 
@@ -12,8 +12,6 @@ public class BookMappingProfile : Profile
             .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.Name))
             .ForMember(dest => dest.AuthorLastName, opt => opt.MapFrom(src => src.Author.LastName))
             .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre))
-            .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.Name))
-            .ForMember(dest => dest.AuthorLastName, opt => opt.MapFrom(src => src.Author.LastName))
             .ForMember(dest => dest.ISBN, opt => opt.MapFrom(src => src.ISBN))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
         CreateMap<BookForCreationDto, Book>()

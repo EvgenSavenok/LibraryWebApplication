@@ -1,5 +1,7 @@
 ﻿using Application.Contracts;
+using Application.Contracts.RepositoryContracts;
 using Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
+using Application.RequestFeatures;
 using Application.Validation;
 using Application.Validation.CustomExceptions;
 using AutoMapper;

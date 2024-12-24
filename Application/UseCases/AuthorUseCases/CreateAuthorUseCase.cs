@@ -1,8 +1,9 @@
 ﻿using Application.Contracts;
+using Application.Contracts.RepositoryContracts;
 using Application.Contracts.UseCasesContracts.AuthorUseCasesContracts;
 using Application.DataTransferObjects;
 using AutoMapper;
-using Domain.Entities.Models;
+using Domain.Models;
 using FluentValidation;
 
 namespace Application.UseCases.AuthorUseCases;

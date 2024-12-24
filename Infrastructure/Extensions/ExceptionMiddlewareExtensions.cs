@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using Application.Contracts;
+using Application.ErrorModel;
 using Application.Validation;
 using Application.Validation.CustomExceptions;
-using Domain.Entities.ErrorModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;

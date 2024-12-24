@@ -1,4 +1,4 @@
-﻿using Domain.Entities.AuthDto;
+﻿using Application.DataTransferObjects;
 
 namespace Application.Contracts.UseCasesContracts.AuthUseCasesContracts;
 

@@ -1,9 +1,8 @@
 ﻿using Application.Contracts;
 using Application.Contracts.UseCasesContracts.AuthUseCasesContracts;
+using Application.DataTransferObjects;
 using Application.Validation.CustomExceptions;
-using Domain.Contracts;
-using Domain.Entities.AuthDto;
-using Domain.Entities.Models;
+using Domain.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Application.UseCases.AuthUseCases;

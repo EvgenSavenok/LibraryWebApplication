@@ -1,4 +1,5 @@
-﻿using Domain.Entities.RequestFeatures;
+﻿using Application.RequestFeatures;
+using Domain.Entities.RequestFeatures;
 
 namespace Application.Contracts.UseCasesContracts.BookUseCasesContracts;
 
