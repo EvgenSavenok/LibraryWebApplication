@@ -8,56 +8,57 @@ using Application.Validation;
 using Application.Validation.CustomExceptions;
 using AutoMapper;
 using Domain.Models;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.UseCases.BorrowingUseCases;
 
 public class ReturnBookUseCase : IReturnBookUseCase
 {
-    private readonly IGetBookByIdUseCase _getBookByIdUseCase;
-    private readonly IGetUserBorrowUseCase _getUserBorrowUseCase;
     private readonly IRepositoryManager _repository;
     private readonly IMapper _mapper;
-    private readonly IUpdateBookUseCase _updateBookUseCase;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    public ReturnBookUseCase(IGetBookByIdUseCase getBookByIdUseCase,
-        IGetUserBorrowUseCase getUserBorrowUseCase,
+    private readonly IValidator<Book> _bookValidator;
+    public ReturnBookUseCase(IValidator<Book> bookValidator,
         IRepositoryManager repository,
         IMapper mapper,
-        IUpdateBookUseCase updateBookUseCase,
         IHttpContextAccessor httpContextAccessor)
     {
-        _getBookByIdUseCase = getBookByIdUseCase;
-        _getUserBorrowUseCase = getUserBorrowUseCase;
         _repository = repository;
         _mapper = mapper;
-        _updateBookUseCase = updateBookUseCase;
         _httpContextAccessor = httpContextAccessor;
+        _bookValidator = bookValidator;
     }
     public async Task ExecuteAsync(int bookId, CancellationToken cancellationToken)
     {
         var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
             throw new UnauthorizedException("Cannot get userId");
-        var bookDto = await _getBookByIdUseCase.ExecuteAsync(bookId, cancellationToken);
-        if (bookDto == null)
-        {
-            throw new NotFoundException($"Cannot find book with id {bookId}");
-        }
-        
-        var borrowDto = await _getUserBorrowUseCase.ExecuteAsync(bookId, cancellationToken);
-        if (borrowDto == null)
-        {
-            throw new NotFoundException($"Cannot find user borrow with id {bookId}");
-        }
-        
-        var bookForUpdateEntity = _mapper.Map<BookForUpdateDto>(bookDto);
-        bookForUpdateEntity.Amount = ++bookForUpdateEntity.Amount;
-        await _updateBookUseCase.ExecuteAsync(bookId, bookForUpdateEntity, cancellationToken);
-        
-        var userBookBorrow = _mapper.Map<UserBookBorrow>(borrowDto);
-        _repository.Borrow.Delete(userBookBorrow);
 
+        var bookEntity = await _repository.Book.GetBookAsync(bookId, trackChanges: true, cancellationToken);
+        if (bookEntity == null)
+            throw new NotFoundException($"Book with id {bookId} not found.");
+        bookEntity.Author = await _repository.Author.GetAuthorAsync(bookId, trackChanges: true, cancellationToken);
+        
+        var borrow = await _repository.Borrow.GetUserBookBorrowAsync(bookId, trackChanges: false, cancellationToken);
+        if (borrow == null)
+            throw new BadRequestException("Cannot get borrow.");
+        
+        bookEntity.Amount++;
+
+        string oldIsbn = bookEntity.ISBN;
+        var validationResult = await _bookValidator.ValidateAsync(bookEntity, cancellationToken);
+        if (!validationResult.IsValid)
+            throw new ValidationException(validationResult.Errors);
+
+        if (oldIsbn != bookEntity.ISBN)
+        {
+            var existingBook = await _repository.Book.GetBookByIsbnAsync(bookEntity.ISBN, cancellationToken);
+            if (existingBook != null)
+                throw new AlreadyExistsException("A book with this ISBN already exists.");
+        }
+
+        _repository.Borrow.Delete(borrow);
         await _repository.SaveAsync();
     }
 }

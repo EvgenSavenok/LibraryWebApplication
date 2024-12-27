@@ -13,7 +13,8 @@ public class BookMappingProfile : Profile
             .ForMember(dest => dest.AuthorLastName, opt => opt.MapFrom(src => src.Author.LastName))
             .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre))
             .ForMember(dest => dest.ISBN, opt => opt.MapFrom(src => src.ISBN))
-            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ReverseMap();
         CreateMap<BookForCreationDto, Book>()
             .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.BookTitle))
             .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre))

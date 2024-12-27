@@ -55,5 +55,4 @@ public class UpdateBookUseCase : IUpdateBookUseCase
         }
         await _repository.SaveAsync();
     }
-
 }

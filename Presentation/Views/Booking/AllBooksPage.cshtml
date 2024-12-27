@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/CSS/Authors/authors_form_styles.css">
     <link rel="stylesheet" type="text/css" href="~/CSS/MainPage/search_styles.css" />
     <script src="~/js/auth.js"></script>
+    <script src="~/js/CreateCancellationToken.js"></script>
 </head>
 <body>
 <button type="button" class="btn btn-primary" onclick="showReservedBooks()">Reserved books</button>
@@ -51,7 +52,6 @@
 
 <div id="pagination" class="pagination"></div>
 
-<script src="~/js/auth.js"></script>
 <script>
         document.addEventListener('DOMContentLoaded', async () => {
             await checkAndRefreshToken();

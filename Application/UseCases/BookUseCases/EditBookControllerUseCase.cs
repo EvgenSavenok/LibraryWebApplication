@@ -1,6 +1,9 @@
-﻿using Application.Contracts.UseCasesContracts.AuthorUseCasesContracts;
+﻿using Application.Contracts.RepositoryContracts;
+using Application.Contracts.UseCasesContracts.AuthorUseCasesContracts;
 using Application.Contracts.UseCasesContracts.BookUseCasesContracts;
 using Application.DataTransferObjects;
+using Application.Validation;
+using AutoMapper;
 using Domain.Entities.RequestFeatures;
 using Domain.Models;
 
@@ -8,18 +11,25 @@ namespace Application.UseCases.BookUseCases;
 
 public class EditBookControllerUseCase : IEditBookControllerUseCase
 {
-    private readonly IGetAllAuthorsUseCase _getAllAuthorsUseCase;
-    private readonly IGetBookByIdUseCase _getBookByIdUseCase;
+    private readonly IRepositoryManager _repository;
+    private readonly IMapper _mapper;
 
-    public EditBookControllerUseCase(IGetAllAuthorsUseCase getAllAuthorsUseCase,
-        IGetBookByIdUseCase getBookByIdUseCase)
+    public EditBookControllerUseCase(IRepositoryManager repository,
+        IMapper mapper)
     {
-        _getAllAuthorsUseCase = getAllAuthorsUseCase;
-        _getBookByIdUseCase = getBookByIdUseCase;
+        _repository = repository;
+        _mapper = mapper;
     }
     public async Task<PageDataDto> ExecuteAsync(int bookId, CancellationToken cancellationToken)
     {
-        var bookDto = await _getBookByIdUseCase.ExecuteAsync(bookId, cancellationToken);
+        var book = await _repository.Book.GetBookAsync(bookId, trackChanges: false, cancellationToken);
+        if (book == null)
+        {
+            throw new NotFoundException($"Book with id {bookId} not found.");
+        }
+        
+        BookDto bookDto = _mapper.Map<BookDto>(book);
+        
         BookGenre defaultGenre = BookGenre.Adventures;
         var genres = Enum.GetValues(typeof(BookGenre))
             .Cast<BookGenre>()
@@ -29,13 +39,23 @@ public class EditBookControllerUseCase : IEditBookControllerUseCase
                 Value = g.ToString(),
                 Selected = g == defaultGenre 
             }).ToList();
-
-        var authorsResult = await _getAllAuthorsUseCase.ExecuteAsync(new AuthorParameters { PageSize = 10 }, cancellationToken);
-
+        
+        var authors = await _repository.Author.GetAllAuthorsAsync(new AuthorParameters { PageSize = 10 },
+            trackChanges: false, cancellationToken);
+        
+        if (authors == null || !authors.Any())
+        {
+            return new PageDataDto
+            {
+                Authors = Enumerable.Empty<AuthorDto>(),
+                Genres = genres
+            };
+        }
+        
         return new PageDataDto
         {
             Genres = genres,
-            Authors = authorsResult.Items,
+            Authors = _mapper.Map<IEnumerable<AuthorDto>>(authors),
             Book = bookDto
         };
     }
