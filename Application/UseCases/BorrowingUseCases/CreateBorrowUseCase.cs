@@ -31,7 +31,7 @@ public class CreateBorrowUseCase : ICreateBorrowUseCase
         _getUserBorrowUseCase = getUserBorrowUseCase;   
     }
 
-    public async Task ExecuteAsync(string userId, int bookId, BookDto bookDto)
+    public async Task ExecuteAsync(string userId, int bookId, BookDto bookDto, CancellationToken cancellationToken)
     {
         var userBookBorrow = new UserBookBorrowDto
         {
@@ -42,7 +42,7 @@ public class CreateBorrowUseCase : ICreateBorrowUseCase
         };
         var bookForUpdateEntity = _mapper.Map<BookForUpdateDto>(bookDto);
         bookForUpdateEntity.Amount = --bookForUpdateEntity.Amount;
-        await _updateBookUseCase.ExecuteAsync(bookId, bookForUpdateEntity);
+        await _updateBookUseCase.ExecuteAsync(bookId, bookForUpdateEntity, cancellationToken);
         var borrowEntity = _mapper.Map<UserBookBorrow>(userBookBorrow);
         var validationResult = await _validator.ValidateAsync(borrowEntity);
         if (!validationResult.IsValid)
@@ -51,7 +51,7 @@ public class CreateBorrowUseCase : ICreateBorrowUseCase
         }
         _repository.Borrow.Create(borrowEntity);
         await _repository.SaveAsync();
-        if (_getUserBorrowUseCase.ExecuteAsync(bookId) == null)
+        if (_getUserBorrowUseCase.ExecuteAsync(bookId, cancellationToken) == null)
         {
             throw new BadRequestException($"Cannot reserve book with id {bookId}");
         }

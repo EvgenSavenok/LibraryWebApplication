@@ -17,9 +17,9 @@ public class EditBookControllerUseCase : IEditBookControllerUseCase
         _getAllAuthorsUseCase = getAllAuthorsUseCase;
         _getBookByIdUseCase = getBookByIdUseCase;
     }
-    public async Task<PageDataDto> ExecuteAsync(int bookId)
+    public async Task<PageDataDto> ExecuteAsync(int bookId, CancellationToken cancellationToken)
     {
-        var bookDto = await _getBookByIdUseCase.ExecuteAsync(bookId);
+        var bookDto = await _getBookByIdUseCase.ExecuteAsync(bookId, cancellationToken);
         BookGenre defaultGenre = BookGenre.Adventures;
         var genres = Enum.GetValues(typeof(BookGenre))
             .Cast<BookGenre>()
@@ -30,7 +30,7 @@ public class EditBookControllerUseCase : IEditBookControllerUseCase
                 Selected = g == defaultGenre 
             }).ToList();
 
-        var authorsResult = await _getAllAuthorsUseCase.ExecuteAsync(new AuthorParameters { PageSize = 10 });
+        var authorsResult = await _getAllAuthorsUseCase.ExecuteAsync(new AuthorParameters { PageSize = 10 }, cancellationToken);
 
         return new PageDataDto
         {

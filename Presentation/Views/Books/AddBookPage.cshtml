@@ -4,6 +4,8 @@
 <h2>Add book</h2>
 
 <link rel="stylesheet" type="text/css" href="~/CSS/Books/add_book_page_styles.css" />
+<script src="/js/CreateCancellationToken.js"></script>
+
 <form id="addBookForm">
     <div>
         <label>Book Title</label>
@@ -69,6 +71,8 @@
                 Description: data.Description.trim() || null,
                 Amount: parseInt(data.Amount)
             };
+
+        const signal = CreateCancellationToken();
         
         try {
             const response = await fetch(`/api/books/add`, {
@@ -77,7 +81,8 @@
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                     },
-                body: JSON.stringify(bookData)
+                signal, 
+                body: JSON.stringify(bookData),
             });
             if (response.ok) {
                 const booksResponse = await fetch('/api/books/GetBooks', {

@@ -4,5 +4,5 @@ namespace Application.Contracts.UseCasesContracts.AuthorUseCasesContracts;
 
 public interface IUpdateAuthorUseCase
 {
-    public Task ExecuteAsync(int id, AuthorForUpdateDto author);
+    public Task ExecuteAsync(int id, AuthorForUpdateDto author, CancellationToken token);
 }

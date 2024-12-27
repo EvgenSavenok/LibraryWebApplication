@@ -22,10 +22,10 @@ public class GetAuthorByIdUseCase : IGetAuthorByIdUseCase
         _logger = logger;
     }
     
-    public async Task<AuthorDto> ExecuteAsync(int id)
+    public async Task<AuthorDto> ExecuteAsync(int id, CancellationToken cancellationToken)
     {
         
-        var author = await _repository.Author.GetAuthorAsync(id, trackChanges: false);
+        var author = await _repository.Author.GetAuthorAsync(id, trackChanges: false, cancellationToken: cancellationToken);
         if (author == null)
         {
             throw new NotFoundException($"Author with id {id} not found.");

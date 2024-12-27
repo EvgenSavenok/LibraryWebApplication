@@ -13,8 +13,8 @@ public class CountAuthorsUseCase : ICountAuthorsUseCase
     {
         _repository = repository;
     }
-    public async Task<int> ExecuteAsync(AuthorParameters requestParameters)
+    public async Task<int> ExecuteAsync(AuthorParameters requestParameters, CancellationToken cancellationToken)
     {
-        return await _repository.Author.CountAuthorsAsync(requestParameters);
+        return await _repository.Author.CountAuthorsAsync(requestParameters, cancellationToken);
     }
 }

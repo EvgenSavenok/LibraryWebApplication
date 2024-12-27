@@ -16,10 +16,10 @@ public class BookInfoControllerUseCase : IBookInfoControllerUseCase
         _getAuthorByIdUseCase = getAuthorByIdUseCase;
     }
 
-    public async Task<PageDataDto> GetBookInfo(int bookId)
+    public async Task<PageDataDto> GetBookInfo(int bookId, CancellationToken cancellationToken)
     {
-        var bookInfo = await _getBookByIdUseCase.ExecuteAsync(bookId);
-        var authorInfo = await _getAuthorByIdUseCase.ExecuteAsync(bookInfo.AuthorId);
+        var bookInfo = await _getBookByIdUseCase.ExecuteAsync(bookId, cancellationToken);
+        var authorInfo = await _getAuthorByIdUseCase.ExecuteAsync(bookInfo.AuthorId, cancellationToken);
         
         return new PageDataDto
         {

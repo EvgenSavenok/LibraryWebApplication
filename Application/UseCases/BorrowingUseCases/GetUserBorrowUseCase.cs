@@ -23,9 +23,9 @@ public class GetUserBorrowUseCase : IGetUserBorrowUseCase
         _logger = logger;
     }
     
-    public async Task<UserBookBorrowDto> ExecuteAsync(int id)
+    public async Task<UserBookBorrowDto> ExecuteAsync(int id, CancellationToken cancellationToken)
     {
-        var borrow = await _repository.Borrow.GetUserBookBorrowAsync(id, trackChanges: false);
+        var borrow = await _repository.Borrow.GetUserBookBorrowAsync(id, trackChanges: false, cancellationToken);
         if (borrow == null)
         {
             throw new BadRequestException("Cannot get borrow.");

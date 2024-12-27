@@ -24,9 +24,11 @@ public class GetBooksUseCase : IGetBooksUseCase
         _logger = logger;
     }
 
-    public async Task<PagedResult<BookDto>> ExecuteAsync(BookParameters bookParameters)
+    public async Task<PagedResult<BookDto>> ExecuteAsync(BookParameters bookParameters,
+        CancellationToken cancellationToken)
     {
-        var books = await _repository.Book.GetAllBooksAsync(bookParameters, trackChanges: false);
+        var books = await _repository.Book.GetAllBooksAsync(bookParameters, cancellationToken,
+            trackChanges: false);
 
         if (books == null || !books.Any())
         {
@@ -40,7 +42,7 @@ public class GetBooksUseCase : IGetBooksUseCase
             };
         }
 
-        var totalBooks = await _repository.Book.CountBooksAsync(bookParameters);
+        var totalBooks = await _repository.Book.CountBooksAsync(bookParameters, cancellationToken);
         var totalPages = (int)Math.Ceiling((double)totalBooks / bookParameters.PageSize);
 
         return new PagedResult<BookDto>

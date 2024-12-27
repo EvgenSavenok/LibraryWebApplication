@@ -34,18 +34,18 @@ public class ReturnBookUseCase : IReturnBookUseCase
         _updateBookUseCase = updateBookUseCase;
         _httpContextAccessor = httpContextAccessor;
     }
-    public async Task ExecuteAsync(int bookId)
+    public async Task ExecuteAsync(int bookId, CancellationToken cancellationToken)
     {
         var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
             throw new UnauthorizedException("Cannot get userId");
-        var bookDto = await _getBookByIdUseCase.ExecuteAsync(bookId);
+        var bookDto = await _getBookByIdUseCase.ExecuteAsync(bookId, cancellationToken);
         if (bookDto == null)
         {
             throw new NotFoundException($"Cannot find book with id {bookId}");
         }
         
-        var borrowDto = await _getUserBorrowUseCase.ExecuteAsync(bookId);
+        var borrowDto = await _getUserBorrowUseCase.ExecuteAsync(bookId, cancellationToken);
         if (borrowDto == null)
         {
             throw new NotFoundException($"Cannot find user borrow with id {bookId}");
@@ -53,7 +53,7 @@ public class ReturnBookUseCase : IReturnBookUseCase
         
         var bookForUpdateEntity = _mapper.Map<BookForUpdateDto>(bookDto);
         bookForUpdateEntity.Amount = ++bookForUpdateEntity.Amount;
-        await _updateBookUseCase.ExecuteAsync(bookId, bookForUpdateEntity);
+        await _updateBookUseCase.ExecuteAsync(bookId, bookForUpdateEntity, cancellationToken);
         
         var userBookBorrow = _mapper.Map<UserBookBorrow>(borrowDto);
         _repository.Borrow.Delete(userBookBorrow);

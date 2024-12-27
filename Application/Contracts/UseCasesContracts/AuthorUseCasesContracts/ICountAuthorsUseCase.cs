@@ -4,5 +4,5 @@ namespace Application.Contracts.UseCasesContracts.AuthorUseCasesContracts;
 
 public interface ICountAuthorsUseCase
 {
-    public Task<int> ExecuteAsync(AuthorParameters requestParameters);
+    public Task<int> ExecuteAsync(AuthorParameters requestParameters, CancellationToken cancellationToken);
 }

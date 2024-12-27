@@ -15,9 +15,9 @@ public class DeleteBookUseCase : IDeleteBookUseCase
         _repository = repository;
         _logger = logger;
     }
-    public async Task ExecuteAsync(int bookId)
+    public async Task ExecuteAsync(int bookId, CancellationToken cancellationToken)
     {
-        var book = await _repository.Book.GetBookAsync(bookId, trackChanges: false);
+        var book = await _repository.Book.GetBookAsync(bookId, trackChanges: false, cancellationToken);
         if (book == null)
         {
             throw new NotFoundException($"Book with id {bookId} not found.");

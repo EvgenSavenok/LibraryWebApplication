@@ -33,9 +33,9 @@ public class BookingController : Controller
     }
 
     [HttpGet("bookInfo/{bookId}")]
-    public async Task<IActionResult> BookInfo(int bookId)
+    public async Task<IActionResult> BookInfo(int bookId, CancellationToken cancellationToken)
     {
-        var pageDataDto = await _bookInfoControllerUseCase.GetBookInfo(bookId);
+        var pageDataDto = await _bookInfoControllerUseCase.GetBookInfo(bookId, cancellationToken);
         return View("~/Views/Booking/InfoAboutBook.cshtml", pageDataDto);
     }
 
@@ -46,23 +46,24 @@ public class BookingController : Controller
     }
 
     [HttpGet("user/reservedBooks")]
-    public async Task<IActionResult> DisplayUserReservedBooks([FromQuery] BorrowParameters requestParameters)
+    public async Task<IActionResult> DisplayUserReservedBooks([FromQuery] BorrowParameters requestParameters, 
+        CancellationToken cancellationToken)
     {
-        var result = await _getUsersBorowsUseCase.ExecuteAsync(requestParameters);
+        var result = await _getUsersBorowsUseCase.ExecuteAsync(requestParameters, cancellationToken);
         return result; 
     }
 
     [HttpPost("take/{bookId}"), Authorize(Policy = "User")]
-    public async Task<IActionResult> TakeBook(int bookId)
+    public async Task<IActionResult> TakeBook(int bookId, CancellationToken cancellationToken)
     {
-        await _takeBookControllerUseCase.ExecuteAsync(bookId);
+        await _takeBookControllerUseCase.ExecuteAsync(bookId, cancellationToken);
         return Ok();
     }
     
     [HttpDelete("delete/{bookId}"), Authorize(Policy = "User")]
-    public async Task<IActionResult> ReturnBook(int bookId)
+    public async Task<IActionResult> ReturnBook(int bookId, CancellationToken cancellationToken)
     {
-        await _returnBookUseCase.ExecuteAsync(bookId);
+        await _returnBookUseCase.ExecuteAsync(bookId, cancellationToken);
         return Ok();
     }
 }

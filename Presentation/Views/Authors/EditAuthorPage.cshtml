@@ -3,6 +3,8 @@
 <h2>Edit author</h2>
 
 <link rel="stylesheet" type="text/css" href="~/CSS/Authors/edit_author_page_styles.css" />
+<script src="/js/CreateCancellationToken.js"></script>
+
 <form id="editAuthorForm">
     <div>
         <label>Name</label>
@@ -45,6 +47,8 @@
             Country: data.Country.trim() || null
         };
 
+        const signal = CreateCancellationToken();
+        
         try {
             const response = await fetch(`/api/authors/${authorId}`, {
                 method: 'PUT',
@@ -52,7 +56,8 @@
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(authorData)  
+                body: JSON.stringify(authorData),
+                signal
             });
             
             if (response.ok) {

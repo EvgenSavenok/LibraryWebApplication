@@ -26,7 +26,7 @@ public class UpdateAuthorUseCase : IUpdateAuthorUseCase
         _validator = validator;
         _logger = logger;
     }
-    public async Task ExecuteAsync(int id, AuthorForUpdateDto author)
+    public async Task ExecuteAsync(int id, AuthorForUpdateDto author, CancellationToken cancellationToken)
     {
         if (!DateTime.TryParse(author.BirthDate, out var birthDate))
         {
@@ -43,7 +43,7 @@ public class UpdateAuthorUseCase : IUpdateAuthorUseCase
             throw new ValidationException("Birth date is too far in the past.");
         }
         
-        var authorEntity = await _repository.Author.GetAuthorAsync(id, trackChanges: true);
+        var authorEntity = await _repository.Author.GetAuthorAsync(id, trackChanges: true, cancellationToken);
         if (authorEntity == null)
         {
             throw new NotFoundException($"Author with id {id} not found.");

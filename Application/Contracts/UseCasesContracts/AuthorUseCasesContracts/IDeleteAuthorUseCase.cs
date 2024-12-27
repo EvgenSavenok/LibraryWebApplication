@@ -2,5 +2,5 @@
 
 public interface IDeleteAuthorUseCase
 {
-    public Task ExecuteAsync(int id);
+    public Task ExecuteAsync(int id, CancellationToken cancellationToken);
 }

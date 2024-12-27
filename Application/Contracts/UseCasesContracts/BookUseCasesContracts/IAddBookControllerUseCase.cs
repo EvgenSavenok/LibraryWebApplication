@@ -5,5 +5,5 @@ namespace Application.Contracts.UseCasesContracts.BookUseCasesContracts;
 
 public interface IAddBookControllerUseCase
 {
-    Task<PageDataDto> ExecuteAsync(AuthorParameters authorParameters);
+    Task<PageDataDto> ExecuteAsync(AuthorParameters authorParameters, CancellationToken cancellationToken);
 }

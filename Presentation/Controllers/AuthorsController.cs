@@ -37,9 +37,9 @@ public class AuthorsController : Controller
     }
 
     [HttpGet("GetAuthors")]
-    public async Task<IActionResult> GetAuthors([FromQuery] AuthorParameters requestParameters)
+    public async Task<IActionResult> GetAuthors([FromQuery] AuthorParameters requestParameters, CancellationToken cancellationToken)
     {
-        var pagedResult = await _getAllAuthorsUseCase.ExecuteAsync(requestParameters);
+        var pagedResult = await _getAllAuthorsUseCase.ExecuteAsync(requestParameters, cancellationToken);
         return Ok(pagedResult);
     }
 
@@ -50,30 +50,30 @@ public class AuthorsController : Controller
     }
 
     [HttpPost("add"), Authorize(Policy = "Admin")]
-    public async Task<IActionResult> CreateAuthor([FromBody] AuthorForCreationDto author)
+    public async Task<IActionResult> CreateAuthor([FromBody] AuthorForCreationDto author, CancellationToken cancellationToken)
     {
-        await _createAuthorUseCase.ExecuteAsync(author);
+        await _createAuthorUseCase.ExecuteAsync(author, cancellationToken);
         return Ok();
     }
 
     [HttpDelete("delete/{id}"), Authorize(Policy = "Admin")]
-    public async Task<IActionResult> DeleteAuthor(int id)
+    public async Task<IActionResult> DeleteAuthor(int id, CancellationToken cancellationToken)
     {
-        await _deleteAuthorUseCase.ExecuteAsync(id);
+        await _deleteAuthorUseCase.ExecuteAsync(id, cancellationToken);
         return NoContent();
     }
 
     [HttpGet("edit/{id}", Name = "EditAuthor")]
-    public async Task<IActionResult> EditAuthor(int id)
+    public async Task<IActionResult> EditAuthor(int id, CancellationToken cancellationToken)
     {
-        var authorDto = await _getAuthorByIdUseCase.ExecuteAsync(id);
+        var authorDto = await _getAuthorByIdUseCase.ExecuteAsync(id, cancellationToken);
         return View("~/Views/Authors/EditAuthorPage.cshtml", authorDto);
     }
 
     [HttpPut("{id}", Name = "UpdateAuthor"), Authorize(Policy = "Admin")]
-    public async Task<IActionResult> UpdateAuthor(int id, [FromBody] AuthorForUpdateDto authorDto)
+    public async Task<IActionResult> UpdateAuthor(int id, [FromBody] AuthorForUpdateDto authorDto, CancellationToken cancellationToken)
     {
-        await _updateAuthorUseCase.ExecuteAsync(id, authorDto);
+        await _updateAuthorUseCase.ExecuteAsync(id, authorDto, cancellationToken);
         return NoContent();
     }
 }

@@ -21,9 +21,9 @@ public class GetBookByIdUseCase : IGetBookByIdUseCase
         _logger = logger;
     }
 
-    public async Task<BookDto> ExecuteAsync(int bookId)
+    public async Task<BookDto> ExecuteAsync(int bookId, CancellationToken cancellationToken)
     {
-        var book = await _repository.Book.GetBookAsync(bookId, trackChanges: false);
+        var book = await _repository.Book.GetBookAsync(bookId, trackChanges: false, cancellationToken);
         if (book == null)
         {
             throw new NotFoundException($"Book with id {bookId} not found.");

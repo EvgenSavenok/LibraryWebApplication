@@ -21,9 +21,9 @@ public class GetAllAuthorsUseCase : IGetAllAuthorsUseCase
         _mapper = mapper;
         _logger = logger;
     }
-    public async Task<PagedResult<AuthorDto>> ExecuteAsync(AuthorParameters authorParameters)
+    public async Task<PagedResult<AuthorDto>> ExecuteAsync(AuthorParameters authorParameters, CancellationToken cancellationToken)
     {
-        var authors = await _repository.Author.GetAllAuthorsAsync(authorParameters, trackChanges: false);
+        var authors = await _repository.Author.GetAllAuthorsAsync(authorParameters, trackChanges: false, cancellationToken);
         if (authors == null || !authors.Any())
         {
             return new PagedResult<AuthorDto>
@@ -35,7 +35,7 @@ public class GetAllAuthorsUseCase : IGetAllAuthorsUseCase
             };
         }
         
-        var totalAuthors = await _repository.Author.CountAuthorsAsync(authorParameters);
+        var totalAuthors = await _repository.Author.CountAuthorsAsync(authorParameters, cancellationToken);
         var totalPages = (int)Math.Ceiling((double)totalAuthors / authorParameters.PageSize);
         
         return new PagedResult<AuthorDto>

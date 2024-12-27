@@ -28,7 +28,7 @@ public class CreateBookUseCase : ICreateBookUseCase
         _logger = logger;
     }
 
-    public async Task ExecuteAsync(BookForCreationDto bookDto)
+    public async Task ExecuteAsync(BookForCreationDto bookDto, CancellationToken cancellationToken)
     {
         var bookEntity = _mapper.Map<Book>(bookDto);
         var validationResult = await _validator.ValidateAsync(bookEntity);
@@ -36,7 +36,7 @@ public class CreateBookUseCase : ICreateBookUseCase
         {
             throw new ValidationException(validationResult.Errors);
         }
-        var existingBook = await _repository.Book.GetBookByIsbnAsync(bookEntity.ISBN);
+        var existingBook = await _repository.Book.GetBookByIsbnAsync(bookEntity.ISBN, cancellationToken);
         if (existingBook != null)
         {
             throw new AlreadyExistsException("A book with this ISBN already exists.");

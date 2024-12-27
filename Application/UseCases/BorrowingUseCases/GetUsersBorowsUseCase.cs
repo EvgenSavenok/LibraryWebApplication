@@ -23,17 +23,18 @@ public class GetUsersBorowsUseCase : IGetUsersBorowsUseCase
         _repository = repository;
         _httpContextAccessor = httpContextAccessor;
     }
-    public async Task<IActionResult> ExecuteAsync(BorrowParameters borrowParameters)
+    public async Task<IActionResult> ExecuteAsync(BorrowParameters borrowParameters, CancellationToken cancellationToken)
     {
         string pathToController = "~/Views/Booking/NoReservedBooksPage.cshtml";
         var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         if (string.IsNullOrEmpty(userId))
         {
-            return new NotFoundResult(); // Или другой подходящий результат
+            return new NotFoundResult(); 
         }
 
-        var borrowsAsync = await _repository.Borrow.GetAllUserBookBorrowsAsync(borrowParameters, userId, trackChanges: false);
+        var borrowsAsync = await _repository.Borrow.GetAllUserBookBorrowsAsync(borrowParameters, userId,
+            trackChanges: false, cancellationToken);
         if (borrowsAsync == null || !borrowsAsync.Any())
         {
             return new ViewResult
@@ -42,7 +43,7 @@ public class GetUsersBorowsUseCase : IGetUsersBorowsUseCase
             };
         }
 
-        var totalBooks = await _repository.Borrow.CountBorrowsAsync(borrowParameters);
+        var totalBooks = await _repository.Borrow.CountBorrowsAsync(borrowParameters, cancellationToken);
         var totalPages = (int)Math.Ceiling((double)totalBooks / borrowParameters.PageSize);
 
         var pagedResult = new PagedResult<UserBookBorrow>

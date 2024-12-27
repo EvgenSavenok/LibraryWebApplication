@@ -4,6 +4,8 @@
 <h2>Edit book</h2>
 
 <link rel="stylesheet" type="text/css" href="~/CSS/Books/edit_book_page_styles.css" />
+<script src="/js/CreateCancellationToken.js"></script>
+
 <form id="editBookForm">
     <div>
         <label>Book Title</label>
@@ -49,13 +51,16 @@
 
         const bookId = @Model.Id;  
         const token = localStorage.getItem('authToken');
+
+        const signal = CreateCancellationToken();
         
         const currentBookResponse = await fetch(`/api/books/${bookId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            signal
         });
         const currentBookData = await currentBookResponse.json();
         const bookData = {

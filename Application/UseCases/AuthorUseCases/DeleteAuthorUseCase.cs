@@ -15,9 +15,9 @@ public class DeleteAuthorUseCase : IDeleteAuthorUseCase
         _repository = repository;
         _logger = logger;
     }
-    public async Task ExecuteAsync(int id)
+    public async Task ExecuteAsync(int id, CancellationToken cancellationToken)
     {
-        var author = await _repository.Author.GetAuthorAsync(id, trackChanges: false);
+        var author = await _repository.Author.GetAuthorAsync(id, trackChanges: false, cancellationToken);
         if (author == null)
         {
             throw new NotFoundException($"Author with id {id} not found.");

@@ -4,5 +4,5 @@ namespace Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
 
 public interface IBookInfoControllerUseCase
 {
-    public Task<PageDataDto> GetBookInfo(int bookId);
+    public Task<PageDataDto> GetBookInfo(int bookId, CancellationToken cancellationToken);
 }

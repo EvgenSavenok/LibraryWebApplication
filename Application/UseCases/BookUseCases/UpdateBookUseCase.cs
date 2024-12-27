@@ -30,9 +30,9 @@ public class UpdateBookUseCase : IUpdateBookUseCase
         _validator = validator;
     }
 
-    public async Task ExecuteAsync(int bookId, BookForUpdateDto bookDto)
+    public async Task ExecuteAsync(int bookId, BookForUpdateDto bookDto, CancellationToken cancellationToken)
     {
-        var bookEntity = await _repository.Book.GetBookAsync(bookId, trackChanges: true);
+        var bookEntity = await _repository.Book.GetBookAsync(bookId, trackChanges: true, cancellationToken);
         if (bookEntity == null)
         {
             _logger.LogInfo($"Book with id: {bookId} doesn't exist in the database.");
@@ -47,7 +47,7 @@ public class UpdateBookUseCase : IUpdateBookUseCase
         }
         if (oldIsbn != bookDto.ISBN)
         {
-            var existingBook = await _repository.Book.GetBookByIsbnAsync(bookEntity.ISBN);
+            var existingBook = await _repository.Book.GetBookByIsbnAsync(bookEntity.ISBN, cancellationToken);
             if (existingBook != null)
             {
                 throw new AlreadyExistsException("A book with this ISBN already exists.");

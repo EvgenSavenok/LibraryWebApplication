@@ -21,14 +21,14 @@ public class TakeBookControllerUseCase : ITakeBookControllerUseCase
         _createBorrowUseCase = createBorrowUseCase;
     }
 
-    public async Task ExecuteAsync(int bookId)
+    public async Task ExecuteAsync(int bookId, CancellationToken cancellationToken)
     {
         var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
             throw new UnauthorizedException("Cannot get userId");
-        var book = await _getBookByIdUseCase.ExecuteAsync(bookId);
+        var book = await _getBookByIdUseCase.ExecuteAsync(bookId, cancellationToken);
         if (book == null)
             throw new NotFoundException("Cannot find book by such id");
-        await _createBorrowUseCase.ExecuteAsync(userId, bookId, book);
+        await _createBorrowUseCase.ExecuteAsync(userId, bookId, book, cancellationToken);
     }
 }

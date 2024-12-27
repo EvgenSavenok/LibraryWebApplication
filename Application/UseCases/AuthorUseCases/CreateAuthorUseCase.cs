@@ -23,7 +23,7 @@ public class CreateAuthorUseCase : ICreateAuthorUseCase
         _validator = validator;
     }
     
-    public async Task ExecuteAsync(AuthorForCreationDto author)
+    public async Task ExecuteAsync(AuthorForCreationDto author, CancellationToken cancellationToken)
     {
         if (!DateTime.TryParse(author.BirthDate, out var birthDate))
         {

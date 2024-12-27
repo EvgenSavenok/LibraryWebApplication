@@ -13,23 +13,26 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
         RepositoryContext = repositoryContext;
     }
-    public async Task<IEnumerable<T>> FindAll(bool trackChanges) =>
+    public async Task<IEnumerable<T>> FindAll(bool trackChanges, CancellationToken cancellationToken) =>
         await (!trackChanges ?
             RepositoryContext.Set<T>()
                 .AsNoTracking() :
-            RepositoryContext.Set<T>()).ToListAsync();
+            RepositoryContext.Set<T>()).ToListAsync(cancellationToken);
+    
     public async Task<IEnumerable<T>> FindByCondition(Expression<Func<T, bool>> expression,
-        bool trackChanges) =>
+        bool trackChanges, CancellationToken cancellationToken) =>
         await (!trackChanges ?
             RepositoryContext.Set<T>()
                 .Where(expression)
                 .AsNoTracking() :
             RepositoryContext.Set<T>()
-                .Where(expression)).ToListAsync();
+                .Where(expression)).ToListAsync(cancellationToken);
+    
     public void Create(T entity) => RepositoryContext.Set<T>().Add(entity);
     public void Update(T entity) => RepositoryContext.Set<T>().Update(entity);
     public void Delete(T entity) => RepositoryContext.Set<T>().Remove(entity);
-    public async Task<IEnumerable<T>> GetBySpecificationAsync(ISpecification<T> specification, bool trackChanges)
+    public async Task<IEnumerable<T>> GetBySpecificationAsync(ISpecification<T> specification, bool trackChanges,
+        CancellationToken cancellationToken)
     {
         IQueryable<T> query = RepositoryContext.Set<T>();
 
@@ -49,6 +52,6 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
             .Skip((specification.PageNumber - 1) * specification.PageSize)
             .Take(specification.PageSize);
 
-        return await query.ToListAsync();
+        return await query.ToListAsync(cancellationToken);
     }
 }

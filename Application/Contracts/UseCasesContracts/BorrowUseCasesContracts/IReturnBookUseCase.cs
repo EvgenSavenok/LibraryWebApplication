@@ -2,5 +2,5 @@
 
 public interface IReturnBookUseCase
 {
-    public Task ExecuteAsync(int bookId);
+    public Task ExecuteAsync(int bookId, CancellationToken cancellationToken);
 }

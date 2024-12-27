@@ -7,5 +7,5 @@ namespace Application.Contracts.UseCasesContracts.BorrowUseCasesContracts;
 
 public interface IGetUsersBorowsUseCase
 {
-    public Task<IActionResult> ExecuteAsync(BorrowParameters borrowParameters);
+    public Task<IActionResult> ExecuteAsync(BorrowParameters borrowParameters, CancellationToken cancellationToken);
 }

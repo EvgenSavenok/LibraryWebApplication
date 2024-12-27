@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="~/CSS/MainPage/search_styles.css" />
     <link rel="stylesheet" type="text/css" href="~/CSS/Authors/authors_table_styles.css" />
     <link rel="stylesheet" type="text/css" href="~/CSS/Books/pagination_styles.css" />
+    <script src="/js/CreateCancellationToken.js"></script>
 </head>
 <body>
     <div class="search-container">
@@ -53,6 +54,9 @@
                 return;
             }           
             const searchTerm = document.getElementById('searchInput').value;
+
+            const signal = CreateCancellationToken();
+            
             try {
                 const url = `/api/authors/GetAuthors?pageNumber=${pageNumber}&pageSize=${pageSize}`                                            
                                             + `&searchTerm=${encodeURIComponent(searchTerm)}`;
@@ -61,7 +65,8 @@
                     headers: {
                         'Authorization': `Bearer ${token}`, 
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    signal
                 });              
                 if (response.ok) {  
                     const result = await response.json();
@@ -134,13 +139,17 @@
         document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
             if (authorIdToDelete) {
                 const token = localStorage.getItem('authToken');
+
+                const signal = CreateCancellationToken();
+                
                 try {
                     const response = await fetch(`/api/authors/delete/${authorIdToDelete}`, {
                         method: 'DELETE',
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Content-Type': 'application/json'
-                        }
+                        },
+                        signal
                     });
                     
                     if (response.ok) {

@@ -15,7 +15,7 @@ public class AddBookControllerUseCase : IAddBookControllerUseCase
         _getAllAuthorsUseCase = getAllAuthorsUseCase;
     }
     
-    public async Task<PageDataDto> ExecuteAsync(AuthorParameters authorParameters)
+    public async Task<PageDataDto> ExecuteAsync(AuthorParameters authorParameters, CancellationToken cancellationToken)
     {
         BookGenre defaultGenre = BookGenre.Adventures;
 
@@ -28,7 +28,7 @@ public class AddBookControllerUseCase : IAddBookControllerUseCase
                 Selected = g == defaultGenre 
             })
             .ToList();
-        var authorsResult = await _getAllAuthorsUseCase.ExecuteAsync(authorParameters);
+        var authorsResult = await _getAllAuthorsUseCase.ExecuteAsync(authorParameters, cancellationToken);
 
         return new PageDataDto
         {

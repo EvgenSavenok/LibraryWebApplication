@@ -24,9 +24,9 @@ public class CountBorrowsUseCase : ICountBorrowsUseCase
         _logger = logger;
     }
 
-    public async Task<int> ExecuteAsync(BorrowParameters borrowParameters)
+    public async Task<int> ExecuteAsync(BorrowParameters borrowParameters, CancellationToken cancellationToken)
     {
-        Task<int> countOfBorrowsAsync = _repository.Borrow.CountBorrowsAsync(borrowParameters);
+        Task<int> countOfBorrowsAsync = _repository.Borrow.CountBorrowsAsync(borrowParameters, cancellationToken);
         if (countOfBorrowsAsync == null)
         {
             throw new BadRequestException("Cannot count number of borrows.");
